@@ -1,12 +1,12 @@
 "use client"
 
 import React, { useState } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ const SignupPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setPasswordError('');
 
@@ -50,6 +50,19 @@ const SignupPage = () => {
 
     // Signup logic would go here
     console.log('Signup submitted', formData);
+
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert('Sign up successful!');
+    } else {
+      alert(data.error);
+    }
   };
 
   return (
@@ -68,10 +81,10 @@ const SignupPage = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
-                <Input 
+                <Input
                   id="firstName"
                   name="firstName"
-                  type="text" 
+                  type="text"
                   placeholder="John"
                   value={formData.firstName}
                   onChange={handleInputChange}
@@ -80,10 +93,10 @@ const SignupPage = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last Name</Label>
-                <Input 
+                <Input
                   id="lastName"
                   name="lastName"
-                  type="text" 
+                  type="text"
                   placeholder="Doe"
                   value={formData.lastName}
                   onChange={handleInputChange}
@@ -94,10 +107,10 @@ const SignupPage = () => {
 
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
-              <Input 
+              <Input
                 id="email"
                 name="email"
-                type="email" 
+                type="email"
                 placeholder="you@example.com"
                 value={formData.email}
                 onChange={handleInputChange}
@@ -107,10 +120,10 @@ const SignupPage = () => {
 
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input 
+              <Input
                 id="password"
                 name="password"
-                type="password" 
+                type="password"
                 placeholder="Create a strong password"
                 value={formData.password}
                 onChange={handleInputChange}
@@ -124,10 +137,10 @@ const SignupPage = () => {
 
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input 
+              <Input
                 id="confirmPassword"
                 name="confirmPassword"
-                type="password" 
+                type="password"
                 placeholder="Repeat your password"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
@@ -139,7 +152,7 @@ const SignupPage = () => {
             </div>
 
             <div className="flex items-center space-x-2">
-              <Checkbox 
+              <Checkbox
                 id="terms"
                 name="termsAccepted"
                 checked={formData.termsAccepted}
@@ -159,12 +172,12 @@ const SignupPage = () => {
             <Button type="submit" className="w-full">
               Create Account
             </Button>
-            
+
             <div className="text-center mt-4">
               <span className="text-sm text-muted-foreground">
                 Already have an account?{' '}
-                <a 
-                  href="/login" 
+                <a
+                  href="/login"
                   className="text-blue-600 hover:underline"
                 >
                   Log In

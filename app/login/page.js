@@ -17,10 +17,24 @@ const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         // Implement login logic here
         console.log('Login attempted', { email, password });
+
+        const res = await fetch('/api/auth/signin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert('Sign in successful!');
+            localStorage.setItem('token', data.token);
+        } else {
+            alert(data.error);
+        }
     };
 
     return (
