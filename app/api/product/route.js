@@ -6,7 +6,7 @@ export async function POST(request) {
     const { productName, stock, price } = await request.json();
 
     const result = await query(
-        'INSERT INTO "Product" ("productName", "stock", "price") VALUES ($1, $2, $3) RETURNING *',
+        'INSERT INTO "Products" ("productName", "stock", "price") VALUES ($1, $2, $3) RETURNING *',
         [productName, stock, price]
     );
 
@@ -15,7 +15,7 @@ export async function POST(request) {
 
 
 export async function GET() {
-    const result = await query('SELECT * FROM "Product"');
+    const result = await query('SELECT * FROM "Products"');
     return NextResponse.json(result.rows);
 }
 
@@ -24,7 +24,7 @@ export async function PUT(request, { params }) {
     const { productName, stock, price } = await request.json();
 
     const result = await query(
-        'UPDATE "Product" SET "productName" = $1, "stock" = $2, "price" = $3 WHERE "productID" = $4 RETURNING *',
+        'UPDATE "Products" SET "productName" = $1, "stock" = $2, "price" = $3 WHERE "productID" = $4 RETURNING *',
         [productName, stock, price, parseInt(params.id)]
     );
 
@@ -33,7 +33,7 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
     const result = await query(
-        'DELETE FROM "Product" WHERE "productID" = $1 RETURNING *',
+        'DELETE FROM "Products" WHERE "productID" = $1 RETURNING *',
         [parseInt(params.id)]
     );
 

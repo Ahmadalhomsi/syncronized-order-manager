@@ -11,7 +11,7 @@ export async function PUT(request, { params }) {
     }
 
     const result = await query(
-        'UPDATE "Product" SET "productName" = $1, "stock" = $2, "price" = $3 WHERE "productID" = $4 RETURNING *',
+        'UPDATE "Products" SET "productName" = $1, "stock" = $2, "price" = $3 WHERE "productID" = $4 RETURNING *',
         [productName, stock, price, productID]
     );
 
