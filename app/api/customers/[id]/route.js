@@ -1,37 +1,27 @@
-// PUT /api/customers/[id]
+import { query } from '@/lib/db';
+import { NextResponse } from 'next/server';
+
+
 export async function PUT(request, { params }) {
     try {
         const { customerName, customerType, budget, totalSpent } = await request.json();
-        const { rows } = await sql`
-        UPDATE "Customers"
-        SET "customerName" = ${customerName},
-            "customerType" = ${customerType},
-            budget = ${budget},
-            "totalSpent" = ${totalSpent}
-        WHERE "customerID" = ${params.id}
-        RETURNING *
-      `;
-        if (!rows.length) {
-            return NextResponse.json({ error: 'Customer not found' }, { status: 404 });
-        }
-        return NextResponse.json(rows[0]);
+        const result = await query(
+            'UPDATE "Customers" SET "customerName" = $1, "customerType" = $2, budget = $3, "totalSpent" = $4 WHERE "customerID" = $5 RETURNING *',
+            [customerName, customerType, budget, totalSpent, params.id]
+        );
+        return NextResponse.json(result.rows[0]);
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
 
-// DELETE /api/customers/[id]
 export async function DELETE(request, { params }) {
     try {
-        const { rows } = await sql`
-        DELETE FROM "Customers"
-        WHERE "customerID" = ${params.id}
-        RETURNING *
-      `;
-        if (!rows.length) {
-            return NextResponse.json({ error: 'Customer not found' }, { status: 404 });
-        }
-        return NextResponse.json({ message: 'Customer deleted successfully' });
+        const result = await query(
+            'DELETE FROM "Customers" WHERE "customerID" = $1 RETURNING *',
+            [params.id]
+        );
+        return NextResponse.json(result.rows[0]);
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }

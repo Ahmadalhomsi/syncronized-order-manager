@@ -1,45 +1,60 @@
 "use client"
 
-import React, { useState } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-// Mock customers data
-const MOCK_CUSTOMERS = [
-  {
-    id: "C001",
-    name: "Ahmet Yılmaz",
-    type: "Premium",
-    budget: 5000,
-    waitTime: 15,
-    priorityScore: 85
-  },
-  {
-    id: "C002", 
-    name: "Ayşe Demir",
-    type: "Normal",
-    budget: 2500,
-    waitTime: 30,
-    priorityScore: 45
-  }
-];
+import { useToast } from "@/hooks/use-toast";
 
 const CustomerList = () => {
-  const [customers, setCustomers] = useState(MOCK_CUSTOMERS);
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await fetch('/api/customers');
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        setCustomers(data || []);
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch customers",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
+  const deleteCustomer = async (id) => {
+    try {
+      const response = await fetch(`/api/customers/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete');
+      
+      setCustomers(prev => prev.filter(c => c.customerID !== id));
+      toast({
+        title: "Success",
+        description: "Customer deleted successfully"
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete customer"
+      });
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <Card>
@@ -54,35 +69,29 @@ const CustomerList = () => {
               <TableHead>Ad</TableHead>
               <TableHead>Tür</TableHead>
               <TableHead>Bütçe</TableHead>
-              <TableHead>Bekleme Süresi</TableHead>
-              <TableHead>Öncelik Skoru</TableHead>
+              <TableHead>Toplam Harcama</TableHead>
               <TableHead>İşlemler</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map((customer) => (
-              <TableRow key={customer.id}>
-                <TableCell>{customer.id}</TableCell>
-                <TableCell>{customer.name}</TableCell>
+            {customers?.map((customer) => (
+              <TableRow key={customer.customerID}>
+                <TableCell>{customer.customerID}</TableCell>
+                <TableCell>{customer.customerName}</TableCell>
                 <TableCell>
-                  <Badge 
-                    variant={customer.type === 'Premium' ? 'default' : 'secondary'}
-                  >
-                    {customer.type}
+                  <Badge variant={customer.customerType === 'Premium' ? 'default' : 'secondary'}>
+                    {customer.customerType}
                   </Badge>
                 </TableCell>
                 <TableCell>{customer.budget} TL</TableCell>
-                <TableCell>{customer.waitTime} dk</TableCell>
+                <TableCell>{customer.totalSpent} TL</TableCell>
                 <TableCell>
-                  <Badge 
-                    variant={customer.priorityScore > 70 ? 'default' : 'outline'}
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => deleteCustomer(customer.customerID)}
                   >
-                    {customer.priorityScore}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Button size="sm" variant="outline">
-                    Sipariş Oluştur
+                    Delete
                   </Button>
                 </TableCell>
               </TableRow>
