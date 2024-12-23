@@ -32,7 +32,7 @@ const CustomerList = () => {
     };
 
     fetchCustomers();
-  }, []);
+  }, [toast]);
 
   const deleteCustomer = async (id) => {
     try {
@@ -40,7 +40,7 @@ const CustomerList = () => {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete');
-      
+
       setCustomers(prev => prev.filter(c => c.customerID !== id));
       toast({
         title: "Success",
@@ -86,8 +86,8 @@ const CustomerList = () => {
                 <TableCell>{customer.budget} TL</TableCell>
                 <TableCell>{customer.totalSpent} TL</TableCell>
                 <TableCell>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     variant="outline"
                     onClick={() => deleteCustomer(customer.customerID)}
                   >
