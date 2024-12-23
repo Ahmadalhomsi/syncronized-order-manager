@@ -24,7 +24,7 @@ const ProductInventoryPanel = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/product');
+      const response = await fetch('/api/products');
       if (!response.ok) throw new Error('Failed to fetch products');
       const data = await response.json();
       setProducts(data);
@@ -62,7 +62,7 @@ const ProductInventoryPanel = () => {
       if (!product) return;
 
       const newStock = Math.max(0, product.stock + adjustment);
-      const response = await fetch(`/api/product/${productId}`, {
+      const response = await fetch(`/api/products/${productId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -89,7 +89,7 @@ const ProductInventoryPanel = () => {
         return;
       }
 
-      const response = await fetch('/api/product', {
+      const response = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -114,7 +114,7 @@ const ProductInventoryPanel = () => {
   const deleteProduct = async (productId) => {
     try {
       await acquireLock(productId);
-      const response = await fetch(`/api/product/${productId}`, {
+      const response = await fetch(`/api/products/${productId}`, {
         method: 'DELETE'
       });
 
