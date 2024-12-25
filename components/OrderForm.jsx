@@ -62,30 +62,25 @@ const OrderForm = ({ customerID, products, onSubmit, onCancel }) => {
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                 {orderItems.map((item, index) => (
                     <div key={index} className="flex gap-4 items-end">
-                        <FormItem className="flex-1">
-                            <FormLabel>Ürün {index + 1}</FormLabel>
-                            <Select
-                                value={item.productID}
-                                onValueChange={(value) => {
-                                    const newItems = [...orderItems];
-                                    newItems[index].productID = value;
-                                    setOrderItems(newItems);
-                                }}
-                            >
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Ürün seçiniz" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {products.map((product) => (
-                                        <SelectItem key={product.productID} value={product.productID}>
-                                            {product.productName} - {product.price} TL
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </FormItem>
+                        <Select 
+                         value={String(item.productID)} onValueChange={(value) => {
+                            const newItems = [...orderItems];
+                            newItems[index].productID = value;
+                            setOrderItems(newItems);
+                        }}>
+                            <FormControl>
+                                <SelectTrigger className="w-96">
+                                    <SelectValue placeholder="Ürün seçiniz" />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                {products.map(p => (
+                                    <SelectItem key={p.productID} value={String(p.productID)}>
+                                        {p.productName} - {p.price} TL
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
 
                         <FormItem className="flex-1">
                             <FormLabel>Adet</FormLabel>
