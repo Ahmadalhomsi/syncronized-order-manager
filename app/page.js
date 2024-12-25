@@ -1,6 +1,6 @@
 "use client"
 
-import SideNavbar from '@/components/dashboard';
+import SideNavbar from '@/components/Sidebar';
 import React from 'react';
 
 

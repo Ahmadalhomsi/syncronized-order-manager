@@ -1,41 +1,82 @@
+"use client";
 
-import React from 'react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { Package, ClipboardList, Users, Settings } from 'lucide-react';
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import {
+    FileSignatureIcon,
+    LayoutDashboard,
+    LibrarySquare,
+    FileText,
+    FileSearch2,
+    Search,
+    Home,
+    Settings,
+    ChevronsLeftRight,
+    MailOpen,
+    CalendarClock,
+    SquareKanban,
+} from "lucide-react";
 
-const Sidebar = () => {
-  const pathname = usePathname();
+export default function SideNavbar() {
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isMobileWidth, setIsMobileWidth] = useState(false);
 
-  const routes = [
-    { path: '/productStock', icon: Package, label: 'Product Stock' },
-    { path: '/logPanel', icon: ClipboardList, label: 'Log Panel' },
-    { path: '/customerPanel', icon: Users, label: 'Customer Panel' },
-    { path: '/admin', icon: Settings, label: 'Admin' }
-  ];
+    useEffect(() => {
+        function handleResize() {
+            setIsMobileWidth(window.innerWidth < 1200);
+        }
 
-  return (
-    <div className="w-64 bg-gray-100 p-4 border-r min-h-screen">
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-      <nav className="space-y-2">
-        {routes.map((route) => {
-          const Icon = route.icon;
-          return (
-            <Link href={route.path} key={route.path}>
-              <Button 
-                variant={pathname === route.path ? "secondary" : "ghost"}
-                className="w-full justify-start"
-              >
-                <Icon className="mr-2 h-5 w-5" />
-                {route.label}
-              </Button>
-            </Link>
-          );
-        })}
-      </nav>
-    </div>
-  );
-};
+        // Set the initial value and add resize listener
+        handleResize();
+        window.addEventListener("resize", handleResize);
 
-export default Sidebar;
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
+    const links = [
+        { title: "Admin", icon: Home, href: "/admin" },
+        { title: "Müşteri Panel", icon: FileText, href: "/customerPanel" },
+        { title: "Ürün Stok Paneli", icon: LayoutDashboard, href: "/productStock" },
+        { title: "Log Paneli", icon: CalendarClock, href: "/logPanel" },
+    ];
+
+    function toggleSidebar() {
+        setIsCollapsed(!isCollapsed);
+    }
+
+    if (isMobileWidth) {
+        return null; // Hide sidebar on mobile
+    }
+
+    return (
+        <div className="relative min-w-[60px] pt-8 flex justify-center items-center">
+            {/* Toggle button */}
+            <div className="absolute right-[-20px] -translate-y-1/2">
+                <Button
+                    onClick={toggleSidebar}
+                    variant="secondary"
+                    className="p-2 w-10 h-8"
+                >
+                    <ChevronsLeftRight />
+                </Button>
+            </div>
+            <div className={isCollapsed ? "hidden" : "w-full"}>
+                <ul className="space-y-2">
+                    {links.map((link) => (
+                        <li key={link.title}>
+                            <a
+                                href={link.href}
+                                className="flex items-center gap-2 p-4 text-gray-800 hover:text-black hover:bg-gray-100 rounded-md"
+                            >
+                                <link.icon className="w-5 h-5" />
+                                {!isCollapsed && <span>{link.title}</span>}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    );
+}

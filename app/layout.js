@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
-import SideNavbar from '@/components/dashboard';
+import SideNavbar from '@/components/Sidebar';
 
 import "./globals.css";
 
