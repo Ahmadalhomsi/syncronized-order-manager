@@ -129,12 +129,12 @@ const CustomerDashboard = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold">Müşteri Listesi</h1>
-        <GenerateCustomersDialog onGenerate={generateRandomCustomers} isGenerating={generating} />
       </div>
       <Card>
         <CardHeader>
           <CardTitle>Müşteri Listesi</CardTitle>
+          <GenerateCustomersDialog onGenerate={generateRandomCustomers} isGenerating={generating} />
+
         </CardHeader>
         <CardContent>
           <Table>

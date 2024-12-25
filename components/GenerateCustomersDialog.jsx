@@ -7,7 +7,7 @@ const GenerateCustomersDialog = ({ onGenerate, isGenerating }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="default">Müşteri Oluştur</Button>
+                <Button variant="default">Random Müşteri Oluştur</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
