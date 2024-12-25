@@ -36,10 +36,10 @@ export default function SideNavbar() {
     }, []);
 
     const links = [
-        { title: "Ana sayfa", icon: Home, href: "/admin" },
-        { title: "Dosyalarım", icon: FileText, href: "/customerPanel" },
-        { title: "Panel", icon: LayoutDashboard, href: "/productStock" },
-        { title: "Takvim", icon: CalendarClock, href: "/logPanel" },
+        { title: "Admin", icon: Home, href: "/admin" },
+        { title: "Müşteri Panel", icon: FileText, href: "/customerPanel" },
+        { title: "Ürün Stok Paneli", icon: LayoutDashboard, href: "/productStock" },
+        { title: "Log Paneli", icon: CalendarClock, href: "/logPanel" },
     ];
 
     function toggleSidebar() {
@@ -68,7 +68,7 @@ export default function SideNavbar() {
                         <li key={link.title}>
                             <a
                                 href={link.href}
-                                className="flex items-center gap-2 p-2 text-gray-800 hover:text-black hover:bg-gray-100 rounded-md"
+                                className="flex items-center gap-2 p-4 text-gray-800 hover:text-black hover:bg-gray-100 rounded-md"
                             >
                                 <link.icon className="w-5 h-5" />
                                 {!isCollapsed && <span>{link.title}</span>}

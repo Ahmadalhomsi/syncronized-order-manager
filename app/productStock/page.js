@@ -134,7 +134,7 @@ const ProductInventoryPanel = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-4xl space-y-4">
         {error && (
           <Alert variant="destructive">

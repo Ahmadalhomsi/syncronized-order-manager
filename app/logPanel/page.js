@@ -56,7 +56,7 @@ const LogPanel = () => {
         <CardTitle>İşlem Logları</CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[300px] w-full">
+        <ScrollArea className="w-full">
           {logs.map((log) => (
             <div 
               key={log.id} 

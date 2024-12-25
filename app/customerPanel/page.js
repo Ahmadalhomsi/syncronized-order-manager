@@ -77,7 +77,7 @@ const CustomerDashboard = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="space-y-6">
+    <div>
       <Card>
         <CardHeader>
           <CardTitle>Müşteri Listesi</CardTitle>

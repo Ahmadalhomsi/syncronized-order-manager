@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
 import SideNavbar from '@/components/dashboard';
-
 
 import "./globals.css";
 
@@ -23,12 +22,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SideNavbar />
-        {children}
+        <div className="flex">
+          <SideNavbar />
+          <div className="flex-grow">
+            {children}
+          </div>
+        </div>
         <Toaster />
       </body>
     </html>
