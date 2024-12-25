@@ -27,12 +27,10 @@ export default function OrdersPage() {
             ) {
                 setOrders((prev) => [newOrder, ...prev]);
                 console.log("New order received:", newOrder);
-
             } else {
                 console.warn("Invalid order data:", newOrder);
             }
         };
-
 
         eventSource.onerror = () => {
             console.error("Error with SSE");
@@ -46,12 +44,22 @@ export default function OrdersPage() {
         <div className="p-4 space-y-4">
             <h1 className="text-xl font-bold">Real-Time Orders</h1>
             {orders.map((order) => (
-                <Card key={order.id}>
+                <Card key={order.orderID} className="border">
                     <CardHeader>
-                        <h2 className="text-lg">Order ID: {JSON.stringify(order)}</h2>
+                        <h2 className="text-lg font-semibold">
+                            Order ID: {order.orderID}
+                        </h2>
                     </CardHeader>
                     <CardContent>
-                        <p>Order Date: {new Date(order.orderdate).toLocaleString()}</p>
+                        <p>Customer ID: {order.customerID}</p>
+                        <p>Product ID: {order.productID}</p>
+                        <p>Quantity: {order.quantity}</p>
+                        <p>Total Price: ${Number(order.totalprice).toFixed(2)}</p>
+                        <p>Order Status: {order.orderstatus}</p>
+                        <p>
+                            Order Date:{" "}
+                            {new Date(order.orderdate).toLocaleString()}
+                        </p>
                     </CardContent>
                 </Card>
             ))}
