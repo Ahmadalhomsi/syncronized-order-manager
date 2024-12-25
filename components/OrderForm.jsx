@@ -28,7 +28,7 @@ const OrderForm = ({ customerID, products, onSubmit, onCancel }) => {
 
     const calculateTotalPrice = () => {
         return orderItems.reduce((total, item) => {
-            const product = products.find(p => p.productID === item.productID);
+            const product = products.find(p => String(p.productID) === String(item.productID));
             return total + (product ? product.price * Number(item.quantity) : 0);
         }, 0);
     };
@@ -62,12 +62,12 @@ const OrderForm = ({ customerID, products, onSubmit, onCancel }) => {
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                 {orderItems.map((item, index) => (
                     <div key={index} className="flex gap-4 items-end">
-                        <Select 
-                         value={String(item.productID)} onValueChange={(value) => {
-                            const newItems = [...orderItems];
-                            newItems[index].productID = value;
-                            setOrderItems(newItems);
-                        }}>
+                        <Select
+                            value={String(item.productID)} onValueChange={(value) => {
+                                const newItems = [...orderItems];
+                                newItems[index].productID = value;
+                                setOrderItems(newItems);
+                            }}>
                             <FormControl>
                                 <SelectTrigger className="w-96">
                                     <SelectValue placeholder="Ürün seçiniz" />
