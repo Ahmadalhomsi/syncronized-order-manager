@@ -1,4 +1,3 @@
-// CustomerDashboard.jsx
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -19,6 +18,17 @@ const CustomerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const form = useForm();
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch('/api/customers');
+      const data = await response.json();
+      setCustomers(data);
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to fetch customers", variant: "destructive" });
+    }
+  };
 
   useEffect(() => {
     Promise.all([
@@ -34,6 +44,54 @@ const CustomerDashboard = () => {
       setLoading(false);
     });
   }, [toast]);
+
+  const generateRandomCustomers = async () => {
+    const customerCount = Math.floor(Math.random() * 6) + 5; // 5-10 customers
+    const premiumCount = 2;
+    const regularCount = customerCount - premiumCount;
+    
+    const newCustomers = [];
+    
+    // Generate premium customers
+    for (let i = 0; i < premiumCount; i++) {
+      newCustomers.push({
+        customerName: `Premium Müşteri ${i + 1}`,
+        customerType: 'Premium',
+        budget: Math.floor(Math.random() * 2501) + 500, // 500-3000 TL
+        status: 'Pending',
+        lastOrderDate: new Date().toISOString(),
+        totalSpent: 0
+      });
+    }
+    
+    // Generate regular customers
+    for (let i = 0; i < regularCount; i++) {
+      newCustomers.push({
+        customerName: `Normal Müşteri ${i + 1}`,
+        customerType: 'Regular',
+        budget: Math.floor(Math.random() * 2501) + 500, // 500-3000 TL
+        status: 'Pending',
+        lastOrderDate: new Date().toISOString(),
+        totalSpent: 0
+      });
+    }
+
+    try {
+      const response = await fetch('/api/customers/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customers: newCustomers.sort(() => Math.random() - 0.5) })
+      });
+
+      if (!response.ok) throw new Error('Failed to generate customers');
+      
+      toast({ title: "Success", description: `${customerCount} müşteri başarıyla oluşturuldu` });
+      setIsGeneratorOpen(false);
+      fetchCustomers(); // Refresh the customer list
+    } catch (error) {
+      toast({ title: "Error", description: "Müşteri oluşturma başarısız", variant: "destructive" });
+    }
+  };
 
   const getStatusColor = (status) => {
     const colors = {
@@ -79,8 +137,34 @@ const CustomerDashboard = () => {
   return (
     <div>
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Müşteri Listesi</CardTitle>
+          <Dialog open={isGeneratorOpen} onOpenChange={setIsGeneratorOpen}>
+            <DialogTrigger asChild>
+              <Button>Rastgele Müşteri Oluştur</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Rastgele Müşteri Oluşturma</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <p>Bu işlem:</p>
+                <ul className="list-disc pl-4 space-y-2">
+                  <li>5-10 arası rastgele müşteri oluşturacak</li>
+                  <li>En az 2 premium müşteri içerecek</li>
+                  <li>500-3000 TL arası rastgele bütçe atayacak</li>
+                </ul>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsGeneratorOpen(false)}>
+                    İptal
+                  </Button>
+                  <Button onClick={generateRandomCustomers}>
+                    Oluştur
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </CardHeader>
         <CardContent>
           <Table>
