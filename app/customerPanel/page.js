@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
+import { addLog } from '@/lib/actions'
+
 
 const CustomerPanel = () => {
   const [customers, setCustomers] = useState([]);
@@ -17,6 +19,7 @@ const CustomerPanel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
 
+  
   // Fetch customers on component mount
   useEffect(() => {
     fetchCustomers();
