@@ -1,4 +1,4 @@
-// GET single order
+// app\api\orders\[id]\route.js
 export async function GET(request, { params }) {
     try {
         const result = await query(

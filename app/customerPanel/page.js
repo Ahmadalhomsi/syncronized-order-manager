@@ -1,3 +1,4 @@
+// CustomerDashboard.jsx
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -5,163 +6,146 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
-import { useToast } from '@/hooks/use-toast';
-import { addLog } from '@/lib/actions'
+import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import OrderForm from '@/components/OrderForm';
 
 
-const CustomerPanel = () => {
+const CustomerDashboard = () => {
   const [customers, setCustomers] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const { toast } = useToast();
 
-  
-  // Fetch customers on component mount
+  // ... (keep existing useEffect, getStatusColor, and calculatePriorityScore functions)
   useEffect(() => {
-    fetchCustomers();
-  }, []);
-
-  const fetchCustomers = async () => {
-    try {
-      const response = await fetch('/api/customers');
-      if (!response.ok) throw new Error('Failed to fetch customers');
-      const data = await response.json();
-      setCustomers(data);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch customers",
-        variant: "destructive"
-      });
-    } finally {
+    Promise.all([
+      fetch('/api/customers').then(res => res.json()),
+      fetch('/api/products').then(res => res.json())
+    ]).then(([customersData, productsData]) => {
+      setCustomers(customersData);
+      setProducts(productsData);
       setLoading(false);
-    }
+    }).catch(error => {
+      console.error(error);
+      toast({ title: "Error", description: "Failed to fetch data", variant: "destructive" });
+      setLoading(false);
+    });
+  }, [toast]);
+
+  const getStatusColor = (status) => {
+    const colors = {
+      'Pending': 'bg-yellow-100 text-yellow-800',
+      'Processing': 'bg-blue-100 text-blue-800',
+      'Completed': 'bg-green-100 text-green-800'
+    };
+    return colors[status] || 'bg-gray-100';
   };
 
-  const generateRandomCustomers = async () => {
-    setGenerating(true);
-    const customerCount = Math.floor(Math.random() * 6) + 5; // 5-10 customers
-    const premiumCount = 2;
-    const regularCount = customerCount - premiumCount;
+  const calculatePriorityScore = (customer) => {
+    const waitingTime = Date.now() - new Date(customer.lastOrderDate).getTime();
+    const waitingHours = Math.floor(waitingTime / (1000 * 60 * 60));
+    return customer.customerType === 'Premium' ?
+      waitingHours * 1.5 : waitingHours;
+  };
+
+  const handleCreateOrder = async (orders) => {
+    console.log(orders);
+    console.log("aaa");
     
-    const newCustomers = [
-      // Generate premium customers
-      ...Array(premiumCount).fill(null).map((_, i) => ({
-        customerName: `Premium Customer ${i + 1}`,
-        customerType: 'Premium',
-        budget: Math.floor(Math.random() * 2501) + 500,
-        status: 'Pending',
-        lastOrderDate: new Date().toISOString(),
-        totalSpent: 0
-      })),
-      // Generate regular customers
-      ...Array(regularCount).fill(null).map((_, i) => ({
-        customerName: `Regular Customer ${i + 1}`,
-        customerType: 'Regular',
-        budget: Math.floor(Math.random() * 2501) + 500,
-        status: 'Pending',
-        lastOrderDate: new Date().toISOString(),
-        totalSpent: 0
-      }))
-    ].sort(() => Math.random() - 0.5);
-
+    
     try {
-      const response = await fetch('/api/customers/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customers: newCustomers })
-      });
+      const orderPromises = orders.map(orderData =>
+        fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        })
+      );
 
-      if (!response.ok) throw new Error('Failed to generate customers');
-      
-      toast({
-        title: "Success",
-        description: `Successfully generated ${customerCount} customers`
-      });
-      
-      await fetchCustomers();
+      await Promise.all(orderPromises);
+
+      toast({ title: "Success", description: "Orders created successfully" });
+      setOpenDialog(false);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate customers",
+        description: "Failed to create orders",
         variant: "destructive"
       });
-    } finally {
-      setGenerating(false);
-      setIsModalOpen(false);
     }
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('tr-TR', {
-      style: 'currency',
-      currency: 'TRY'
-    }).format(amount);
-  };
-
-  const getStatusBadge = (status) => {
-    const variants = {
-      'Pending': 'warning',
-      'Active': 'success',
-      'Inactive': 'secondary'
-    };
-    return variants[status] || 'default';
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="space-y-4 p-4">
+    <div>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Customer Management</CardTitle>
-          <Button 
-            onClick={() => setIsModalOpen(true)}
-            disabled={generating}
-          >
-            Generate Random Customers
-          </Button>
+        <CardHeader>
+          <CardTitle>Müşteri Listesi</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Customer Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead className="text-right">Budget</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Total Spent</TableHead>
+                <TableHead>Müşteri ID</TableHead>
+                <TableHead>Ad</TableHead>
+                <TableHead>Tür</TableHead>
+                <TableHead>Bütçe</TableHead>
+                <TableHead>Bekleme Süresi</TableHead>
+                <TableHead>Öncelik Skoru</TableHead>
+                <TableHead>Durum</TableHead>
+                <TableHead>İşlemler</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {customers.map((customer) => (
+              {customers?.map((customer) => (
                 <TableRow key={customer.customerID}>
+                  <TableCell>{customer.customerID}</TableCell>
                   <TableCell>{customer.customerName}</TableCell>
                   <TableCell>
                     <Badge variant={customer.customerType === 'Premium' ? 'default' : 'secondary'}>
                       {customer.customerType}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    {formatCurrency(customer.budget)}
+                  <TableCell>{customer.budget} TL</TableCell>
+                  <TableCell>
+                    {Math.floor((Date.now() - new Date(customer.lastOrderDate).getTime()) / (1000 * 60 * 60))} saat
+                  </TableCell>
+                  <TableCell>{calculatePriorityScore(customer).toFixed(1)}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded-full ${getStatusColor(customer.status)}`}>
+                      {customer.status}
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getStatusBadge(customer.status)}>
-                      {customer.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {formatCurrency(customer.totalSpent)}
+                    <Dialog open={openDialog && selectedCustomerId === customer.customerID} onOpenChange={(open) => {
+                      setOpenDialog(open);
+                      if (!open) setSelectedCustomerId(null);
+                    }}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedCustomerId(customer.customerID)}
+                        >
+                          Sipariş Oluştur
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>Yeni Sipariş - {customer.customerName}</DialogTitle>
+                        </DialogHeader>
+                        <OrderForm
+                          customerID={customer.customerID}
+                          products={products}
+                          onSubmit={handleCreateOrder}
+                          onCancel={() => setOpenDialog(false)}
+                        />
+                      </DialogContent>
+                    </Dialog>
                   </TableCell>
                 </TableRow>
               ))}
@@ -169,44 +153,8 @@ const CustomerPanel = () => {
           </Table>
         </CardContent>
       </Card>
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Generate Random Customers</DialogTitle>
-            <DialogDescription>
-              This will generate:
-              • 5-10 random customers
-              • At least 2 premium customers
-              • Random budgets between 500-3000 TL
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsModalOpen(false)}
-              disabled={generating}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={generateRandomCustomers}
-              disabled={generating}
-            >
-              {generating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                'Generate'
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
 
-export default CustomerPanel;
+export default CustomerDashboard;
