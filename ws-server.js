@@ -1,3 +1,5 @@
+// ws-server.js
+
 const { WebSocketServer } = require('ws');
 
 const PORT = 8080;
