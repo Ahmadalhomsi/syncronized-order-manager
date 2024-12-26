@@ -41,6 +41,25 @@ export default function CustomerPage() {
             return;
         }
 
+        if (quantity > selectedProduct.stock) {
+            toast({
+                title: "Error",
+                description: "Not enough stock",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        if (quantity > 5) {
+            toast({
+                title: "Error",
+                description: "Maximum quantity is 5",
+                variant: "destructive"
+            });
+            return;
+        }
+
+
         const orderRequest = {
             productId: selectedProduct.productID,
             productName: selectedProduct.productName,
@@ -65,11 +84,11 @@ export default function CustomerPage() {
     return (
         <div className="p-4 max-w-2xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">Product Order Request</h1>
-            
+
             <div className="space-y-4">
                 <div>
                     <label className="block mb-2">Select Product:</label>
-                    <select 
+                    <select
                         className="w-full p-2 border rounded"
                         value={selectedProduct?.productID || ""}
                         onChange={(e) => setSelectedProduct(products.find(p => p.productID === Number(e.target.value)))}
