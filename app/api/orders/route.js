@@ -18,14 +18,16 @@ export async function GET() {
 export async function POST(request) {
     try {
         const { customerID, productID, quantity, totalprice, orderstatus } = await request.json();
-        
+        console.log(customerID, productID, quantity, totalprice, orderstatus);
+
         const result = await query(
             'INSERT INTO public."Orders" ("customerID", "productID", quantity, totalprice, orderstatus) VALUES ($1, $2, $3, $4, $5) RETURNING *',
             [customerID, productID, quantity, totalprice, orderstatus]
         );
-        
+
         return NextResponse.json(result.rows[0], { status: 201 });
     } catch (error) {
+        console.log(error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

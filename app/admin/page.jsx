@@ -8,6 +8,8 @@ export default function AdminPage() {
     const [processedOrders, setProcessedOrders] = useState(new Set());
 
     const handleOrderResponse = async (order, isAccepted) => {
+        console.log('Processing orderXX:', order);
+        
         try {
             const response = await fetch('/api/orders/process', {
                 method: 'POST',

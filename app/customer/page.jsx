@@ -32,7 +32,7 @@ export default function CustomerPage() {
         }
     };
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!selectedProduct) {
             toast({
                 title: "Error",
@@ -60,23 +60,50 @@ export default function CustomerPage() {
             return;
         }
 
-
         const orderRequest = {
-            productId: selectedProduct.productID,
+            customerID: 1, // Replace with the actual customer ID from your app state or context
+            productID: selectedProduct.productID,
             productName: selectedProduct.productName,
             quantity,
-            price: selectedProduct.price,
-            totalPrice: selectedProduct.price * quantity
+            totalprice: selectedProduct.price * quantity,
+            orderstatus: "Pending" // Example status, adjust as needed
         };
 
-        sendMessage(JSON.stringify(orderRequest));
-        toast({
-            title: "Success",
-            description: "Order request sent successfully"
-        });
-        setSelectedProduct(null);
-        setQuantity(1);
+        try {
+            // POST the order to the server
+            const response = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderRequest)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to create order");
+            }
+
+            const orderData = await response.json();
+
+            // Send the socket message
+            sendMessage(JSON.stringify(orderData));
+
+            toast({
+                title: "Success",
+                description: "Order request sent successfully"
+            });
+
+            // Reset the form
+            setSelectedProduct(null);
+            setQuantity(1);
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: error.message,
+                variant: "destructive"
+            });
+        }
     };
+
 
     if (loading) {
         return <div>Loading...</div>;
