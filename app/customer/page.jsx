@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { toast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function CustomerPage() {
     const { sendMessage } = useWebSocket("ws://localhost:8080");
@@ -83,6 +84,13 @@ export default function CustomerPage() {
 
     return (
         <div className="p-4 max-w-2xl mx-auto">
+            <Toaster
+                duration={3000}
+                position="top-right"
+                closeButton
+                swipeDirection="right"
+                swipeThreshold={50}
+            />
             <h1 className="text-2xl font-bold mb-6">Product Order Request</h1>
 
             <div className="space-y-4">
