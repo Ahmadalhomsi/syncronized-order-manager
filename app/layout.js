@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import SideNavbar from '@/components/Sidebar';
 import { usePathname } from 'next/navigation';
 import "./globals.css";
-import { useWebSocket } from "@/hooks/useWebSocket";
+// import { useWebSocket } from "@/hooks/useWebSocket";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,10 +18,10 @@ const geistMono = Geist_Mono({
 });
 
 export default function RootLayout({ children }) {
-  const { messages } = useWebSocket("ws://localhost:8080");
+  // const { messages } = useWebSocket("ws://localhost:8080");
   const pathname = usePathname();
-  
-  // Check if we're on the customer page
+
+  // // Check if we're on the customer page
   const isCustomerPage = pathname === '/customer';
 
   return (
@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
         <div className="flex">
           <SideNavbar />
           <div className="flex-grow">
-            {messages.length > 0 && !isCustomerPage && (
+            {/* {messages.length > 0 && !isCustomerPage && (
               <div 
                 key={messages[0]}
                 className="fixed bottom-4 right-4 bg-white p-4 border rounded shadow-lg animate-slide-up"
@@ -40,15 +40,15 @@ export default function RootLayout({ children }) {
                 <h2 className="font-bold">New Request</h2>
                 <p>{messages[0]}</p>
               </div>
-            )}
+            )} */}
             {children}
           </div>
         </div>
         {/* Only render Toaster if not on customer page */}
         {!isCustomerPage && (
-          <Toaster 
+          <Toaster
             duration={3000}
-            position="top-right"
+            position="bottom-right"
             closeButton
             swipeDirection="right"
             swipeThreshold={50}

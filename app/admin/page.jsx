@@ -8,8 +8,6 @@ export default function AdminPage() {
     const [processedOrders, setProcessedOrders] = useState(new Set());
 
     const handleOrderResponse = async (order, isAccepted) => {
-        console.log('Processing orderXX:', order);
-        
         try {
             const response = await fetch('/api/orders/process', {
                 method: 'POST',
@@ -27,13 +25,13 @@ export default function AdminPage() {
                 throw new Error('Failed to process order');
             }
 
-            // Mark this order as processed
-            setProcessedOrders(prev => new Set([...prev, order.productId + order.timestamp]));
+            // Mark this order as processed using orderID
+            setProcessedOrders(prev => new Set([...prev, order.orderID]));
 
             toast({
                 title: isAccepted ? "Order Accepted" : "Order Rejected",
-                description: `Order for ${order.productName} has been ${isAccepted ? 'accepted' : 'rejected'}`,
-                variant: isAccepted ? "default" : "destructive"
+                description: `Order #${order.orderID} has been ${isAccepted ? 'accepted' : 'rejected'}`,
+                variant: isAccepted ? "default" : "destructive",
             });
 
         } catch (error) {
@@ -51,18 +49,24 @@ export default function AdminPage() {
             <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
             <div className="space-y-4">
                 {messages.map((message, index) => {
-                    const order = JSON.parse(message);
-                    const orderKey = order.productId + order.timestamp;
-                    const isProcessed = processedOrders.has(orderKey);
+                    const order = typeof message === 'string' ? JSON.parse(message) : message;
+                    const isProcessed = processedOrders.has(order.orderID);
 
                     return (
-                        <div key={index} className="p-4 border rounded bg-gray-50">
-                            <h3 className="font-semibold">{order.productName}</h3>
+                        <div key={order.orderID || index} className="p-4 border rounded bg-gray-50">
+                            <div className="flex justify-between items-start mb-4">
+                                <h3 className="font-semibold">Order #{order.orderID}</h3>
+                                {/* <span className="text-sm px-2 py-1 bg-yellow-100 rounded">
+                                    {order.orderstatus}
+                                </span> */}
+                            </div>
                             <div className="space-y-2">
+                                <p>Customer ID: {order.customerID}</p>
+                                <p>Product ID: {order.productID}</p>
                                 <p>Quantity: {order.quantity}</p>
-                                <p>Unit Price: ${order.price}</p>
-                                <p>Total: ${order.totalPrice}</p>
-                                
+                                <p>Total Price: ${parseFloat(order.totalprice).toFixed(2)}</p>
+                                <p>Order Date: {new Date(order.orderdate).toLocaleString()}</p>
+
                                 {!isProcessed && (
                                     <div className="flex gap-2 mt-4">
                                         <button
