@@ -25,7 +25,6 @@ export default function AdminPage() {
                 throw new Error('Failed to process order');
             }
 
-            // Mark this order as processed using orderID
             setProcessedOrders(prev => new Set([...prev, order.orderID]));
 
             toast({
@@ -44,9 +43,63 @@ export default function AdminPage() {
         }
     };
 
+    const handleAcceptAll = async () => {
+        const unprocessedOrders = messages.filter(message => {
+            const order = typeof message === 'string' ? JSON.parse(message) : message;
+            return !processedOrders.has(order.orderID);
+        });
+
+        if (unprocessedOrders.length === 0) {
+            toast({
+                title: "No Orders to Process",
+                description: "All orders have already been processed",
+                variant: "default"
+            });
+            return;
+        }
+
+        try {
+            // Process all unprocessed orders
+            await Promise.all(
+                unprocessedOrders.map(message => {
+                    const order = typeof message === 'string' ? JSON.parse(message) : message;
+                    return handleOrderResponse(order, true);
+                })
+            );
+
+            toast({
+                title: "Bulk Processing Complete",
+                description: `Successfully processed ${unprocessedOrders.length} orders`,
+                variant: "default"
+            });
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to process some orders",
+                variant: "destructive"
+            });
+            console.error('Error in bulk processing:', error);
+        }
+    };
+
+    const unprocessedCount = messages.filter(message => {
+        const order = typeof message === 'string' ? JSON.parse(message) : message;
+        return !processedOrders.has(order.orderID);
+    }).length;
+
     return (
         <div className="p-4 max-w-2xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+                {unprocessedCount > 0 && (
+                    <button
+                        onClick={handleAcceptAll}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-2"
+                    >
+                        Accept All ({unprocessedCount})
+                    </button>
+                )}
+            </div>
             <div className="space-y-4">
                 {messages.map((message, index) => {
                     const order = typeof message === 'string' ? JSON.parse(message) : message;
@@ -56,9 +109,6 @@ export default function AdminPage() {
                         <div key={order.orderID || index} className="p-4 border rounded bg-gray-50">
                             <div className="flex justify-between items-start mb-4">
                                 <h3 className="font-semibold">Order #{order.orderID}</h3>
-                                {/* <span className="text-sm px-2 py-1 bg-yellow-100 rounded">
-                                    {order.orderstatus}
-                                </span> */}
                             </div>
                             <div className="space-y-2">
                                 <p>Customer ID: {order.customerID}</p>
