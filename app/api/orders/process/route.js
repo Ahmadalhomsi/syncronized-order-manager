@@ -95,21 +95,15 @@ export async function POST(request) {
                 );
             }
 
-            // get total spent
-            const query4 = await query(
-                `SELECT "totalSpent"
-                 FROM "Customers"
-                 WHERE "customerID" = $1`,
-                [order.customerID]
-            );
-
-            console.log('query4ssss:', query4);
-
-
             const updatedCustomer = result3.rows[0];
             const newTotalSpent = updatedCustomer.totalSpent + order.totalprice;
 
-            if (newTotalSpent > 2000) {
+            // newTotalSpent parse float
+            const parsedTotalSpent = parseFloat(newTotalSpent);
+
+
+            if (Number(parsedTotalSpent) > 2000) {
+                console.log('Customer total spent is greater than 2000');
                 const result5 = await query(
                     `UPDATE "Customers"
                      SET "customerType" = 'Premium'
