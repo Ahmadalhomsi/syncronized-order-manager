@@ -94,6 +94,35 @@ export async function POST(request) {
                     { status: 404 }
                 );
             }
+            
+            // get total spent
+            const query4 = await query(
+                `SELECT "totalSpent"
+                 FROM "Customers"
+                 WHERE "customerID" = $1`,
+                [order.customerID]
+            );
+
+            const updatedCustomer = result3.rows[0];
+            const newTotalSpent = updatedCustomer.totalSpent + order.totalprice;
+
+            if (newTotalSpent > 2000) {
+                const result5 = await query(
+                    `UPDATE "Customers"
+                     SET "customerType" = 'Premium'
+                     WHERE "customerID" = $1
+                     RETURNING *`,
+                    [order.customerID]
+                );
+
+                if (result5.rowCount === 0) {
+                    console.log('Failed to update customer type to Premium');
+                    return NextResponse.json(
+                        { error: 'Failed to update customer type' },
+                        { status: 500 }
+                    );
+                }
+            }
 
 
         }
