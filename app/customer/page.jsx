@@ -50,8 +50,6 @@ export default function CustomerPage() {
             //     "lastUpdated": "2024-12-28T07:41:13.078Z"
             //   }
 
-
-
             console.log(data2);
 
         } catch (error) {
@@ -130,7 +128,7 @@ export default function CustomerPage() {
 
                 const logData = {
                     message: "Not enough stock",
-                    userType: "Premium",
+                    userType: customer.customerType,
                     customerId: userId,
                     product: selectedProduct.productName,
                     quantity: item.quantity,
@@ -150,7 +148,7 @@ export default function CustomerPage() {
 
                 const logData = {
                     message: "Maximum quantity is 5",
-                    userType: "Premium",
+                    userType: customer.customerType,
                     customerId: userId,
                     product: selectedProduct.productName,
                     quantity: item.quantity,
@@ -192,7 +190,7 @@ export default function CustomerPage() {
 
                 const logData = {
                     message: "Order created",
-                    userType: "Premium",
+                    userType: customer.customerType,
                     customerId: userId,
                     product: orderRequest.productName,
                     quantity: orderRequest.quantity,
