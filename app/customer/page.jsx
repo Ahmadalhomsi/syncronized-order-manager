@@ -100,6 +100,17 @@ export default function CustomerPage() {
                     description: `Not enough stock for ${selectedProduct.productName}`,
                     variant: "destructive",
                 });
+
+                const logData = {
+                    message: "Not enough stock",
+                    userType: "Premium",
+                    customerId: userId,
+                    product: selectedProduct.productName,
+                    quantity: item.quantity,
+                    result: "Not enough stock"
+                }
+
+                await addLog(logData)
                 return;
             }
 
@@ -109,6 +120,17 @@ export default function CustomerPage() {
                     description: "Maximum quantity is 5",
                     variant: "destructive",
                 });
+
+                const logData = {
+                    message: "Maximum quantity is 5",
+                    userType: "Premium",
+                    customerId: userId,
+                    product: selectedProduct.productName,
+                    quantity: item.quantity,
+                    result: "Maximum quantity exceeded"
+                }
+
+                await addLog(logData)
                 return;
             }
 
@@ -140,6 +162,17 @@ export default function CustomerPage() {
                     });
                     return; // Stop processing remaining orders if one fails
                 }
+
+                const logData = {
+                    message: "Order created",
+                    userType: "Premium",
+                    customerId: userId,
+                    product: orderRequest.productName,
+                    quantity: orderRequest.quantity,
+                    result: "Order created"
+                }
+
+                await addLog(logData)
 
                 const orderData = await response.json();
                 toast({
