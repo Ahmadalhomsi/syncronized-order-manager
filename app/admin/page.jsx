@@ -4,7 +4,7 @@ import { useWebSocket } from "../../hooks/useWebSocket";
 import { useState } from "react";
 
 export default function AdminPage() {
-    const { messages } = useWebSocket("ws://localhost:8080");
+    const { messages, sendResponse } = useWebSocket("ws://localhost:8080"); // are array
     const [processedOrders, setProcessedOrders] = useState(new Set());
 
     const handleOrderResponse = async (order, isAccepted) => {
@@ -32,6 +32,14 @@ export default function AdminPage() {
                 description: `Order #${order.orderID} has been ${isAccepted ? 'Accepted' : 'Rejected'}`,
                 variant: isAccepted ? "default" : "destructive",
             });
+
+            if (isAccepted) {
+                // Send a response to the client
+                sendResponse({
+                    orderID: order.orderID,
+                    message: `Order #${order.orderID} has been accepted`
+                });
+            }
 
         } catch (error) {
             toast({

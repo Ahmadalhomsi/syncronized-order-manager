@@ -7,12 +7,16 @@ import { Trash2 } from "lucide-react";
 import { addLog } from '@/lib/logger'
 
 export default function CustomerPage() {
-    const { sendMessage } = useWebSocket("ws://localhost:8080");
+    const { sendMessage, responses } = useWebSocket("ws://localhost:8080");
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [orderItems, setOrderItems] = useState([{ productID: "", quantity: 1 }]);
     const [userId, setUserId] = useState(null);
     const [customer, setCustomer] = useState(null);
+
+    console.log("YESS SIR");
+    console.log(responses);
+
 
     // Fetch user session on component mount
     useEffect(() => {
