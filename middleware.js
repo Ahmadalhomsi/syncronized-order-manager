@@ -4,7 +4,7 @@ export function middleware(request) {
     const userSession = request.cookies.get('user_session');
     const { pathname } = request.nextUrl;
 
-    console.log('userSession:', userSession);
+    // console.log('userSession:', userSession);
 
     // Define public routes
     const publicRoutes = ['/login', '/signup', '/api', '/_next'];

@@ -94,7 +94,7 @@ export async function POST(request) {
                     { status: 404 }
                 );
             }
-            
+
             // get total spent
             const query4 = await query(
                 `SELECT "totalSpent"
@@ -102,6 +102,9 @@ export async function POST(request) {
                  WHERE "customerID" = $1`,
                 [order.customerID]
             );
+
+            console.log('query4ssss:', query4);
+
 
             const updatedCustomer = result3.rows[0];
             const newTotalSpent = updatedCustomer.totalSpent + order.totalprice;

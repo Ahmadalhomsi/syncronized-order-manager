@@ -14,9 +14,25 @@ export default function CustomerPage() {
     const [userId, setUserId] = useState(null);
     const [customer, setCustomer] = useState(null);
 
-    console.log("YESS SIR");
-    console.log(responses);
-
+    useEffect(() => {
+        console.log(responses);
+        if (responses.message === "Accepted") {
+            toast({
+                title: "Order Accepted",
+                description: "Your order has been accepted",
+                variant: "default",
+            });
+            if (!customer && customer.totalSpent + calculateTotal() > 2000) {
+                customer.customerType = "Premium"
+            }
+        } else if (responses.message === "Rejected") {
+            toast({
+                title: "Order Rejected",
+                description: "Your order has been rejected",
+                variant: "destructive",
+            });
+        }
+    }, [responses]);
 
     // Fetch user session on component mount
     useEffect(() => {
@@ -295,7 +311,7 @@ export default function CustomerPage() {
                 </button>
 
                 <div className="p-4 bg-gray-50 rounded">
-                    <p className="font-semibold">Total Price: ${calculateTotal().toFixed(2)}</p>
+                    <p className="font-semibold">Total Price: TL{calculateTotal().toFixed(2)}</p>
                 </div>
 
                 <button

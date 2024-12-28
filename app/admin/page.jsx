@@ -37,7 +37,14 @@ export default function AdminPage() {
                 // Send a response to the client
                 sendResponse({
                     orderID: order.orderID,
-                    message: `Order #${order.orderID} has been accepted`
+                    message: `Accepted`
+                });
+            }
+            else {
+                // Send a response to the client
+                sendResponse({
+                    orderID: order.orderID,
+                    message: `Rejected`
                 });
             }
 
