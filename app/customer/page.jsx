@@ -12,6 +12,7 @@ export default function CustomerPage() {
     const [loading, setLoading] = useState(false);
     const [orderItems, setOrderItems] = useState([{ productID: "", quantity: 1 }]);
     const [userId, setUserId] = useState(null);
+    const [customer, setCustomer] = useState(null);
 
     // Fetch user session on component mount
     useEffect(() => {
@@ -23,10 +24,36 @@ export default function CustomerPage() {
         try {
             const response = await fetch("/api/getUserSession");
             if (!response.ok) {
-                throw new Error("Failed to fetch user session");
+                console.log("Failed to fetch user session");
             }
             const data = await response.json();
             setUserId(data.userId);
+
+            // fetch user info
+            const response2 = await fetch(`/api/customers/${data.userId}`);
+            if (!response2.ok) {
+                console.log("Failed to fetch user info");
+            }
+            const data2 = await response2.json();
+            setCustomer(data2);
+
+            // exmaple
+            // {
+            //     "customerID": 89,
+            //     "createdAt": "2024-12-28T07:41:13.078Z",
+            //     "budget": "500",
+            //     "customerType": "Standard",
+            //     "totalSpent": "0",
+            //     "customerName": "ahmad",
+            //     "password": "123456",
+            //     "priorityScore": "0",
+            //     "lastUpdated": "2024-12-28T07:41:13.078Z"
+            //   }
+
+
+
+            console.log(data2);
+
         } catch (error) {
             toast({
                 title: "Error",
