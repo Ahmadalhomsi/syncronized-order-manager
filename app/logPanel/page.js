@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { getLogs, addLog } from '@/lib/actions'
+import { getLogs, addLog } from '@/lib/logger'
 
 const LogPanel = () => {
   const [logs, setLogs] = useState([])
