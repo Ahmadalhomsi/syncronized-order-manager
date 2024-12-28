@@ -4,6 +4,7 @@ import { useWebSocket } from "../../hooks/useWebSocket";
 import { toast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Trash2 } from "lucide-react";
+import { addLog } from '@/lib/logger'
 
 export default function CustomerPage() {
     const { sendMessage } = useWebSocket("ws://localhost:8080");
@@ -80,13 +81,25 @@ export default function CustomerPage() {
         const orders = orderItems.map((item) => {
             const selectedProduct = products.find((p) => p.productID === Number(item.productID));
             if (!selectedProduct) {
-                throw new Error("Invalid product selected");
+                toast({
+                    title: "Error",
+                    description: "Product not found",
+                    variant: "destructive",
+                });
             }
             if (item.quantity > selectedProduct.stock) {
-                throw new Error(`Not enough stock for ${selectedProduct.productName}`);
+                toast({
+                    title: "Error",
+                    description: `Not enough stock for ${selectedProduct.productName}`,
+                    variant: "destructive",
+                });
             }
             if (item.quantity > 5) {
-                throw new Error(`Maximum quantity is 5 for ${selectedProduct.productName}`);
+                toast({
+                    title: "Error",
+                    description: "Maximum quantity is 5",
+                    variant: "destructive",
+                });
             }
 
             return {
@@ -109,7 +122,11 @@ export default function CustomerPage() {
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.error || "Failed to create order");
+                    toast({
+                        title: "Error",
+                        description: errorData.error,
+                        variant: "destructive",
+                    });
                 }
 
                 const orderData = await response.json();
