@@ -5,6 +5,17 @@ export async function POST(request) {
     try {
         const { customerName, password } = await request.json();
 
+        // admin login
+        if (customerName === 'admin' && password === 'admin') {
+            return NextResponse.json({
+                success: true,
+                user: {
+                    id: 0,
+                    name: 'admin'
+                }
+            });
+        }
+
         // Check if username already exists
         const existingUser = await query(
             'SELECT "customerID" FROM "Customers" WHERE "customerName" = $1',
