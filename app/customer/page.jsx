@@ -86,6 +86,7 @@ export default function CustomerPage() {
                     description: "Product not found",
                     variant: "destructive",
                 });
+                return;
             }
             if (item.quantity > selectedProduct.stock) {
                 toast({
@@ -93,6 +94,7 @@ export default function CustomerPage() {
                     description: `Not enough stock for ${selectedProduct.productName}`,
                     variant: "destructive",
                 });
+                return;
             }
             if (item.quantity > 5) {
                 toast({
@@ -100,6 +102,7 @@ export default function CustomerPage() {
                     description: "Maximum quantity is 5",
                     variant: "destructive",
                 });
+                return;
             }
 
             return {
