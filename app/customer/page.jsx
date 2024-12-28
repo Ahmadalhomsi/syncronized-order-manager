@@ -10,10 +10,30 @@ export default function CustomerPage() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [orderItems, setOrderItems] = useState([{ productID: "", quantity: 1 }]);
+    const [userId, setUserId] = useState(null);
 
+    // Fetch user session on component mount
     useEffect(() => {
+        fetchUserSession();
         fetchData();
     }, []);
+
+    const fetchUserSession = async () => {
+        try {
+            const response = await fetch("/api/getUserSession");
+            if (!response.ok) {
+                throw new Error("Failed to fetch user session");
+            }
+            const data = await response.json();
+            setUserId(data.userId);
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: error.message,
+                variant: "destructive",
+            });
+        }
+    };
 
     const fetchData = async () => {
         setLoading(true);
@@ -25,7 +45,7 @@ export default function CustomerPage() {
             toast({
                 title: "Error",
                 description: "Failed to fetch products",
-                variant: "destructive"
+                variant: "destructive",
             });
         } finally {
             setLoading(false);
@@ -47,41 +67,44 @@ export default function CustomerPage() {
     };
 
     const handleSend = async () => {
-        const invalidItems = orderItems.filter(item => !item.productID);
+        const invalidItems = orderItems.filter((item) => !item.productID);
         if (invalidItems.length > 0) {
             toast({
                 title: "Error",
                 description: "Please select products for all items",
-                variant: "destructive"
+                variant: "destructive",
             });
             return;
         }
 
-        const orders = orderItems.map(item => {
-            const selectedProduct = products.find(p => p.productID === Number(item.productID));
+        const orders = orderItems.map((item) => {
+            const selectedProduct = products.find((p) => p.productID === Number(item.productID));
+            if (!selectedProduct) {
+                throw new Error("Invalid product selected");
+            }
             if (item.quantity > selectedProduct.stock) {
                 throw new Error(`Not enough stock for ${selectedProduct.productName}`);
             }
             if (item.quantity > 5) {
                 throw new Error(`Maximum quantity is 5 for ${selectedProduct.productName}`);
             }
-            
+
             return {
-                customerID: 1,
+                customerID: userId,
                 productID: selectedProduct.productID,
                 productName: selectedProduct.productName,
                 quantity: item.quantity,
                 totalprice: selectedProduct.price * item.quantity,
-                orderstatus: "Pending"
+                orderstatus: "Pending",
             };
         });
 
         try {
             for (const orderRequest of orders) {
-                const response = await fetch('/api/orders', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderRequest)
+                const response = await fetch("/api/orders", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(orderRequest),
                 });
 
                 if (!response.ok) {
@@ -90,12 +113,16 @@ export default function CustomerPage() {
                 }
 
                 const orderData = await response.json();
+                toast({
+                    title: "Order Created",
+                    description: `Order for ${orderData.productName} created successfully.`,
+                });
                 sendMessage(JSON.stringify(orderData));
             }
 
             toast({
                 title: "Success",
-                description: "Orders sent successfully"
+                description: "Orders sent successfully",
             });
 
             setOrderItems([{ productID: "", quantity: 1 }]);
@@ -103,12 +130,16 @@ export default function CustomerPage() {
             toast({
                 title: "Error",
                 description: error.message,
-                variant: "destructive"
+                variant: "destructive",
             });
         }
     };
 
     if (loading) return <div>Loading...</div>;
+
+    if (!userId) {
+        return <div>Please log in to view this page.</div>;
+    }
 
     const calculateTotal = () => {
         return orderItems.reduce((total, item) => {
@@ -164,7 +195,7 @@ export default function CustomerPage() {
                     </div>
                 ))}
 
-                <button 
+                <button
                     onClick={handleAddItem}
                     className="w-full px-4 py-2 border-2 border-blue-500 text-blue-500 rounded hover:bg-blue-50"
                 >
