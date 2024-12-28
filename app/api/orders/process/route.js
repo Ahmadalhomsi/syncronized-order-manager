@@ -1,5 +1,5 @@
 import { query } from '@/lib/db';
-import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server'; // Standard to premium, multithreading, stock decrease, total spent of the customer
 
 export async function POST(request) {
     try {
