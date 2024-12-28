@@ -6,17 +6,15 @@ export function middleware(request) {
 
     console.log('userSession:', userSession);
 
-    if (userSession) {
-        return NextResponse.next();
-    }
-
-    if (!userSession || request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/api')
+    if (userSession || request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/api')
         || request.nextUrl.pathname.startsWith('/_next') || request.nextUrl.pathname.startsWith('/signup')) {
         return NextResponse.next();
     }
-    else {
+
+    if (!userSession) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
+
 
     return NextResponse.next();
 }

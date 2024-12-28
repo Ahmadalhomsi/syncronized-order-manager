@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from '@/hooks/use-toast';
 
 const LoginPage = () => {
     const router = useRouter();
@@ -32,9 +33,21 @@ const LoginPage = () => {
 
             const data = await res.json();
 
-            if (res.ok) {
-                router.push('/');
+            console.log("ZAASDAWD");
+            if (data.user.id === 'admin') {
+                router.push('/admin');
                 router.refresh();
+            }
+            else {
+                router.push('/customer');
+            }
+
+
+            if (res.ok) {
+                toast({
+                    title: "Success",
+                    description: "Logged in successfully"
+                });
             } else {
                 setError(data.error || 'Login failed');
             }
