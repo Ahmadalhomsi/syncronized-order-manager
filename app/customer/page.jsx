@@ -78,8 +78,13 @@ export default function CustomerPage() {
             return;
         }
 
-        const orders = orderItems.map((item) => {
+        // Create array to store validated orders
+        const validatedOrders = [];
+
+        // Validate all orders first
+        for (const item of orderItems) {
             const selectedProduct = products.find((p) => p.productID === Number(item.productID));
+
             if (!selectedProduct) {
                 toast({
                     title: "Error",
@@ -88,6 +93,7 @@ export default function CustomerPage() {
                 });
                 return;
             }
+
             if (item.quantity > selectedProduct.stock) {
                 toast({
                     title: "Error",
@@ -96,6 +102,7 @@ export default function CustomerPage() {
                 });
                 return;
             }
+
             if (item.quantity > 5) {
                 toast({
                     title: "Error",
@@ -105,18 +112,19 @@ export default function CustomerPage() {
                 return;
             }
 
-            return {
+            validatedOrders.push({
                 customerID: userId,
                 productID: selectedProduct.productID,
                 productName: selectedProduct.productName,
                 quantity: item.quantity,
                 totalprice: selectedProduct.price * item.quantity,
                 orderstatus: "Pending",
-            };
-        });
+            });
+        }
 
         try {
-            for (const orderRequest of orders) {
+            // Process all validated orders
+            for (const orderRequest of validatedOrders) {
                 const response = await fetch("/api/orders", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -127,9 +135,10 @@ export default function CustomerPage() {
                     const errorData = await response.json();
                     toast({
                         title: "Error",
-                        description: errorData.error,
+                        description: errorData.error || "Failed to create order",
                         variant: "destructive",
                     });
+                    return; // Stop processing remaining orders if one fails
                 }
 
                 const orderData = await response.json();
@@ -140,16 +149,17 @@ export default function CustomerPage() {
                 sendMessage(JSON.stringify(orderData));
             }
 
+            // Only show final success message if all orders were processed
             toast({
                 title: "Success",
-                description: "Orders sent successfully",
+                description: "All orders sent successfully",
             });
 
             setOrderItems([{ productID: "", quantity: 1 }]);
         } catch (error) {
             toast({
                 title: "Error",
-                description: error.message,
+                description: error.message || "An unexpected error occurred",
                 variant: "destructive",
             });
         }
