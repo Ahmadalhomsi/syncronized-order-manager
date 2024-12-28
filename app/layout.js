@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="flex">
-          {!isAuthPage && (
+          {!isAuthPage && !isCustomerPage && (
             <SideNavbar />
           )}
           <div className="flex-grow">
