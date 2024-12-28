@@ -1,4 +1,5 @@
 import { query } from '@/lib/db';
+import { addLog } from '@/lib/logger';
 import { NextResponse } from 'next/server'; // Standard to premium, multithreading, stock decrease, total spent of the customer
 
 export async function POST(request) {
@@ -44,6 +45,59 @@ export async function POST(request) {
             processingTime: new Date() - new Date(updatedOrder.orderdate),
             status: orderStatus
         };
+
+
+        if (orderStatus === 'Accepted') {
+            const result2 = await query(
+                `UPDATE "Products"
+                 SET stock = stock - $1
+                 WHERE "productID" = $2
+                 RETURNING *`,
+                [order.quantity, order.productID]
+            );
+
+            if (result2.rowCount === 0) {
+                console.log('Product not found or stock is insufficient');
+                return NextResponse.json(
+                    { error: 'Product not found for decrease' },
+                    { status: 404 }
+                );
+            }
+
+            // customer total spent and premium status
+            // CREATE TABLE IF NOT EXISTS public."Customers"
+            // (
+            //     "customerID" integer NOT NULL DEFAULT nextval('"Customers_customerID_seq"'::regclass),
+            //     "createdAt" timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+            //     budget numeric,
+            //     "customerType" character varying(255) COLLATE pg_catalog."default",
+            //     "totalSpent" numeric,
+            //     "customerName" character varying(255) COLLATE pg_catalog."default",
+            //     password text COLLATE pg_catalog."default" NOT NULL,
+            //     "priorityScore" numeric DEFAULT 0,
+            //     "lastUpdated" timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+            //     CONSTRAINT "Customers_pkey" PRIMARY KEY ("customerID")
+            // )
+
+            const result3 = await query(
+                `UPDATE "Customers"
+                 SET "totalSpent" = "totalSpent" + $1
+                 WHERE "customerID" = $2
+                 RETURNING *`,
+                [order.totalprice, order.customerID]
+            );
+
+            if (result3.rowCount === 0) {
+                console.log('Customer not found');
+                return NextResponse.json(
+                    { error: 'Customer not found' },
+                    { status: 404 }
+                );
+            }
+
+
+        }
+
 
         return NextResponse.json({
             message: `Order successfully ${status}`,

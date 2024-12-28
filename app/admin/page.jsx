@@ -16,7 +16,7 @@ export default function AdminPage() {
                 },
                 body: JSON.stringify({
                     order,
-                    status: isAccepted ? 'accepted' : 'rejected',
+                    status: isAccepted ? 'Accepted' : 'Rejected',
                     processedAt: new Date().toISOString()
                 }),
             });
@@ -29,7 +29,7 @@ export default function AdminPage() {
 
             toast({
                 title: isAccepted ? "Order Accepted" : "Order Rejected",
-                description: `Order #${order.orderID} has been ${isAccepted ? 'accepted' : 'rejected'}`,
+                description: `Order #${order.orderID} has been ${isAccepted ? 'Accepted' : 'Rejected'}`,
                 variant: isAccepted ? "default" : "destructive",
             });
 
