@@ -15,6 +15,7 @@ export default function CustomerPage() {
     const [customer, setCustomer] = useState(null);
 
     useEffect(() => {
+
         console.log(responses);
         if (responses.message === "Accepted") {
             toast({
@@ -22,9 +23,6 @@ export default function CustomerPage() {
                 description: "Your order has been accepted",
                 variant: "default",
             });
-            if (!customer && customer.totalSpent + calculateTotal() > 2000) {
-                customer.customerType = "Premium"
-            }
         } else if (responses.message === "Rejected") {
             toast({
                 title: "Order Rejected",
@@ -32,12 +30,14 @@ export default function CustomerPage() {
                 variant: "destructive",
             });
         }
+        fetchCustomer();
     }, [responses]);
 
     // Fetch user session on component mount
     useEffect(() => {
         fetchUserSession();
         fetchData();
+        fetchCustomer();
     }, []);
 
     const fetchUserSession = async () => {
@@ -49,29 +49,23 @@ export default function CustomerPage() {
             const data = await response.json();
             setUserId(data.userId);
 
-            // fetch user info
-            const response2 = await fetch(`/api/customers/${data.userId}`);
-            if (!response2.ok) {
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: error.message,
+                variant: "destructive",
+            });
+        }
+    };
+
+    const fetchCustomer = async () => {
+        try {
+            const response = await fetch(`/api/customers/${userId}`);
+            if (!response.ok) {
                 console.log("Failed to fetch user info");
             }
-            const data2 = await response2.json();
-            setCustomer(data2);
-
-            // exmaple
-            // {
-            //     "customerID": 89,
-            //     "createdAt": "2024-12-28T07:41:13.078Z",
-            //     "budget": "500",
-            //     "customerType": "Standard",
-            //     "totalSpent": "0",
-            //     "customerName": "ahmad",
-            //     "password": "123456",
-            //     "priorityScore": "0",
-            //     "lastUpdated": "2024-12-28T07:41:13.078Z"
-            //   }
-
-            console.log(data2);
-
+            const data = await response.json();
+            setCustomer(data);
         } catch (error) {
             toast({
                 title: "Error",

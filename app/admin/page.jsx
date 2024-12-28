@@ -58,7 +58,7 @@ export default function AdminPage() {
         }
     };
 
-    const handleAcceptAll = async () => {
+    const handleAcceptAll = async () => { // multithreading
         const unprocessedOrders = messages.filter(message => {
             const order = typeof message === 'string' ? JSON.parse(message) : message;
             return !processedOrders.has(order.orderID);
