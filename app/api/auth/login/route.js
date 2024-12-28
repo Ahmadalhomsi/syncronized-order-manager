@@ -7,6 +7,24 @@ export async function POST(request) {
     try {
         const { customerName, password } = await request.json();
 
+        // admin login
+        if (customerName === 'admin' && password === 'admin') {
+            cookies().set('user_session', 'admin', {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 60 * 60 * 24 // 24 hours
+            });
+
+            return NextResponse.json({
+                success: true,
+                user: {
+                    id: 'admin',
+                    name: 'admin'
+                }
+            });
+        }
+
         // Check user credentials
         const result = await query(
             'SELECT "customerID", "customerName", password FROM "Customers" WHERE "customerName" = $1 AND password = $2',
