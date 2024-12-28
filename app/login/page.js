@@ -1,6 +1,8 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link'; // Import the Link component
 import {
     Card,
     CardContent,
@@ -11,29 +13,33 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 
 const LoginPage = () => {
-    const [email, setEmail] = useState('');
+    const router = useRouter();
+    const [customerName, setCustomerName] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        // Implement login logic here
-        console.log('Login attempted', { email, password });
 
-        const res = await fetch('/api/auth/signin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-        });
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customerName, password }),
+            });
 
-        const data = await res.json();
-        if (res.ok) {
-            alert('Sign in successful!');
-            localStorage.setItem('token', data.token);
-        } else {
-            alert(data.error);
+            const data = await res.json();
+
+            if (res.ok) {
+                router.push('/');
+                router.refresh();
+            } else {
+                setError(data.error || 'Login failed');
+            }
+        } catch (error) {
+            setError('An error occurred');
         }
     };
 
@@ -49,15 +55,20 @@ const LoginPage = () => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
+                    {error && (
+                        <div className="mb-4 p-2 text-sm text-red-600 bg-red-50 rounded">
+                            {error}
+                        </div>
+                    )}
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="customerName">User Name</Label>
                             <Input
-                                id="email"
-                                type="email"
-                                placeholder="you@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                id="customerName"
+                                type="text"
+                                placeholder="username"
+                                value={customerName}
+                                onChange={(e) => setCustomerName(e.target.value)}
                                 required
                             />
                         </div>
@@ -71,54 +82,17 @@ const LoginPage = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
-                            <a
-                                href="/forgot-password"
-                                className="text-sm text-blue-600 hover:underline float-right"
-                            >
-                                Forgot password?
-                            </a>
                         </div>
                         <Button type="submit" className="w-full">
                             Sign In
                         </Button>
-
-                        {/* <div className="flex items-center my-4">
-                        <Separator className="flex-grow" />
-                        <span className="px-3 text-muted-foreground text-sm">
-                            OR
-                        </span>
-                        <Separator className="flex-grow" />
-                    </div> */}
-
-                        {/* <div className="grid grid-cols-2 gap-4">
-                        <Button 
-                            variant="outline" 
-                            className="w-full"
-                        >
-                            <GitHubLogoIcon className="mr-2" />
-                            GitHub
-                        </Button>
-                        <Button 
-                            variant="outline" 
-                            className="w-full"
-                        >
-                            <GoogleLogoIcon className="mr-2" />
-                            Google
-                        </Button>
-                    </div> */}
-
-                        <div className="text-center mt-4">
-                            <span className="text-sm text-muted-foreground">
-                                Don&apos;t have an account?{' '}
-                                <a
-                                    href="/signup"
-                                    className="text-blue-600 hover:underline"
-                                >
-                                    Sign Up
-                                </a>
-                            </span>
-                        </div>
                     </form>
+                    <div className="mt-4 text-sm text-center">
+                        Don’t have an account?{' '}
+                        <Link href="/signup" className="text-blue-600 hover:underline">
+                            Sign up here
+                        </Link>
+                    </div>
                 </CardContent>
             </Card>
         </div>

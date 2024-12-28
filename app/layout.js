@@ -23,6 +23,7 @@ export default function RootLayout({ children }) {
 
   // // Check if we're on the customer page
   const isCustomerPage = pathname === '/customer';
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -30,7 +31,9 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="flex">
-          <SideNavbar />
+          {!isAuthPage && (
+            <SideNavbar />
+          )}
           <div className="flex-grow">
             {/* {messages.length > 0 && !isCustomerPage && (
               <div 
