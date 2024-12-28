@@ -91,7 +91,7 @@ export default function SideNavbar() {
                 </ul>
                 <Button
                     variant="ghost"
-                    className="w-full justify-start flex items-center gap-2"
+                    className="w-full justify-start flex items-center gap-4 text-red-800 "
                     onClick={logout}
                 >
                     <ExitIcon className="w-5 h-5" />
