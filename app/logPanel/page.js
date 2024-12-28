@@ -1,12 +1,11 @@
-// components/LogPanel.jsx
 "use client"
 
 import React, { useState, useEffect, useOptimistic } from 'react'
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -32,28 +31,36 @@ const LogPanel = () => {
     return () => clearInterval(interval)
   }, [])
 
-  const handleAddLog = async (message, userType) => {
+  const handleAddLog = async (logData) => {
     // Optimistic update
     const optimisticLog = {
       id: Date.now(),
-      message,
-      userType,
+      message: logData.message,
+      userType: logData.userType,
+      customerId: logData.customerId,
+      product: logData.product,
+      quantity: logData.quantity,
+      result: logData.result,
       timestamp: new Date().toISOString(),
-      type: message.includes('sipariş') ? 'success' : 
-            message.includes('iptal') ? 'error' : 'info'
+      type: getLogType(logData.message)
     }
     addOptimisticLog(optimisticLog)
 
     // Actual server action
-    const { success, log } = await addLog(message, userType)
+    const { success, log } = await addLog(logData)
     if (!success) {
-      // Handle error - maybe show a toast notification
       console.error('Failed to add log')
     }
   }
 
+  const getLogType = (message) => {
+    if (message.includes('yetersiz')) return 'error'
+    if (message.includes('sipariş')) return 'success'
+    return 'info'
+  }
+
   const getBadgeVariant = (type) => {
-    switch(type) {
+    switch (type) {
       case 'success': return 'default'
       case 'info': return 'secondary'
       case 'error': return 'destructive'
@@ -65,6 +72,25 @@ const LogPanel = () => {
     return new Date(timestamp).toLocaleString('tr-TR')
   }
 
+  const renderLogDetails = (log) => {
+    const details = []
+
+    if (log.customerId) {
+      details.push(`Müşteri: ${log.customerId}`)
+    }
+    if (log.product) {
+      details.push(`Ürün: ${log.product}`)
+    }
+    if (log.quantity) {
+      details.push(`Miktar: ${log.quantity}`)
+    }
+    if (log.result) {
+      details.push(`Sonuç: ${log.result}`)
+    }
+
+    return details.join(' | ')
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -73,20 +99,27 @@ const LogPanel = () => {
       <CardContent>
         <ScrollArea className="h-[400px] w-full">
           {optimisticLogs.map((log) => (
-            <div 
-              key={log.id} 
-              className="flex items-center space-x-2 mb-2 p-2 bg-gray-50 rounded"
+            <div
+              key={log.id}
+              className="flex flex-col space-y-2 mb-4 p-3 bg-gray-50 rounded"
             >
-              <Badge variant={getBadgeVariant(log.type)}>
-                {log.type.toUpperCase()}
-              </Badge>
-              <Badge variant="outline">
-                {log.userType}
-              </Badge>
-              <span className="text-sm text-gray-500">
-                {formatTimestamp(log.timestamp)}
-              </span>
-              <span>{log.message}</span>
+              <div className="flex items-center space-x-2">
+                <Badge variant={getBadgeVariant(log.type)}>
+                  {log.type.toUpperCase()}
+                </Badge>
+                <Badge variant="outline">
+                  {log.userType}
+                </Badge>
+                <span className="text-sm text-gray-500">
+                  {formatTimestamp(log.timestamp)}
+                </span>
+              </div>
+              <div className="ml-2">
+                <p className="text-gray-800">{log.message}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {renderLogDetails(log)}
+                </p>
+              </div>
             </div>
           ))}
         </ScrollArea>

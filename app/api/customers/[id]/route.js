@@ -5,6 +5,10 @@ import { NextResponse } from 'next/server';
 
 
 export async function GET(request, { params }) {
+    if (!params.id) {
+        return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
     try {
         const result = await query(
             'SELECT * FROM "Customers" WHERE "customerID" = $1',
