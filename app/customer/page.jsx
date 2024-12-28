@@ -258,8 +258,9 @@ export default function CustomerPage() {
     return (
         <div className="p-4 max-w-2xl mx-auto">
             <Toaster duration={3000} position="top-right" closeButton swipeDirection="right" swipeThreshold={50} />
-            <h1 className="text-2xl font-bold mb-6">Product Order Request</h1>
-
+            <h1 className="text-2xl font-bold mb-1">Product Order Request</h1>
+            <h2 className="text-xl font-bold mb-6 text-green-600">Customer money: {customer.budget}
+            </h2>
             <div className="space-y-4">
                 {orderItems.map((item, index) => (
                     <div key={index} className="p-4 border rounded">
