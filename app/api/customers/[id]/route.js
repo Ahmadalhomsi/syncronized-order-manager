@@ -6,7 +6,6 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request, { params }) {
     try {
-
         const data = await params
 
         if (!data.id) {

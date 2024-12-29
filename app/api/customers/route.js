@@ -15,10 +15,13 @@ export async function GET() {
 export async function POST(request) {
   try {
     const { customerName, customerType, budget } = await request.json();
+    const staticPassword = '123456'; // Static password for all customers in this test project
+
     const result = await query(
-      'INSERT INTO "Customers" ("customerName", "customerType", budget, "totalSpent") VALUES ($1, $2, $3, 0) RETURNING *',
-      [customerName, customerType, budget]
+      'INSERT INTO "Customers" ("customerName", "customerType", budget, "totalSpent", "password") VALUES ($1, $2, $3, 0, $4) RETURNING *',
+      [customerName, customerType, budget, staticPassword]
     );
+
     return NextResponse.json(result.rows[0]);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
