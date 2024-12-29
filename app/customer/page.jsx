@@ -5,6 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Trash2 } from "lucide-react";
 import { addLog } from '@/lib/logger'
+import CustomerInfoCard from "@/components/customerInfoCard";
 
 export default function CustomerPage() {
     const { sendMessage, responses } = useWebSocket("ws://localhost:8080");
@@ -243,9 +244,9 @@ export default function CustomerPage() {
                     title: "Order Created",
                     description: `Order for ${orderData.productName} created successfully.`,
                 });
-               
+
                 orderData.customer = customer;
-                        
+
                 sendMessage(JSON.stringify(orderData));
             }
 
@@ -282,16 +283,8 @@ export default function CustomerPage() {
         <div className="p-4 max-w-2xl mx-auto">
             <Toaster duration={3000} position="top-right" closeButton swipeDirection="right" swipeThreshold={50} />
             <h1 className="text-2xl font-bold mb-1">Product Order Request</h1>
-            {customer && customer.budget !== undefined && ( // Check for both null/undefined and undefined budget
-                <h2 className="text-xl font-bold mb-1 text-green-600">
-                    Customer money: {customer.budget}
-                </h2>
-            )}
-            {customer && customer.customerType !== undefined && ( // Check for both null/undefined and undefined budget
-                <h2 className="text-xl font-bold mb-6 text-green-600">
-                    Customer Type: {customer.customerType}
-                </h2>
-            )}
+            {customer && <CustomerInfoCard customer={customer} />}
+
             <div className="space-y-4">
                 {orderItems.map((item, index) => (
                     <div key={index} className="p-4 border rounded">
@@ -342,7 +335,7 @@ export default function CustomerPage() {
                 </button>
 
                 <div className="p-4 bg-gray-50 rounded">
-                    <p className="font-semibold">Total Price: TL{calculateTotal().toFixed(2)}</p>
+                    <p className="font-semibold">Total Price: {calculateTotal().toFixed(2)}TL</p>
                 </div>
 
                 <button
