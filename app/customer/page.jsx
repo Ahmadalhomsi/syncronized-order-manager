@@ -307,7 +307,7 @@ export default function CustomerPage() {
                                     <option value="">Choose a product</option>
                                     {products.map((product) => (
                                         <option key={product.productID} value={product.productID}>
-                                            {product.productName} - ${product.price} (Stock: {product.stock})
+                                            {product.productName} - {product.price} TL (Stock: {product.stock})
                                         </option>
                                     ))}
                                 </select>

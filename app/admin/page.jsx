@@ -176,7 +176,7 @@ export default function AdminPage() {
                             <p>Customer Type: {order.customer.customerType ? 'Premium' : 'Standard'}</p>
                             <p>Product ID: {order.productID}</p>
                             <p>Quantity: {order.quantity}</p>
-                            <p>Total Price: ${parseFloat(order.totalprice).toFixed(2)}</p>
+                            <p>Total Price: {parseFloat(order.totalprice).toFixed(2)} TL</p>
                             <p>Order Date: {new Date(order.orderdate).toLocaleString()}</p>
                             <p>Waiting Time: {((Date.now() - new Date(order.orderdate).getTime()) / 1000).toFixed(0)}s</p>
 
