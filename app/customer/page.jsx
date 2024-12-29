@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Trash2 } from "lucide-react";
 import { addLog } from '@/lib/logger'
 import CustomerInfoCard from "@/components/customerInfoCard";
+import { Button } from "@/components/ui/button";
+import { ExitIcon } from "@radix-ui/react-icons";
 
 export default function CustomerPage() {
     const { sendMessage, responses } = useWebSocket("ws://localhost:8080");
@@ -279,10 +281,31 @@ export default function CustomerPage() {
         }, 0);
     };
 
+    const logout = async () => {
+        // delete user_session
+        const res = await fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (res.ok) {
+            window.location.href = '/login';
+        }
+    }
+
     return (
         <div className="p-4 max-w-2xl mx-auto">
             <Toaster duration={3000} position="top-right" closeButton swipeDirection="right" swipeThreshold={50} />
             <h1 className="text-2xl font-bold mb-1">Product Order Request</h1>
+
+            <Button
+                variant="ghost"
+                className="w-full justify-start flex items-center gap-4 text-red-800 "
+                onClick={logout}
+            >
+                <ExitIcon className="w-5 h-5" />
+                <span>Logout</span>
+            </Button>
             {customer && <CustomerInfoCard customer={customer} />}
 
             <div className="space-y-4">
