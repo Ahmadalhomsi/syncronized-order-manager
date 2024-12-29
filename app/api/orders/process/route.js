@@ -81,7 +81,8 @@ export async function POST(request) {
 
             const result3 = await query(
                 `UPDATE "Customers"
-                 SET "totalSpent" = "totalSpent" + $1
+                 SET "totalSpent" = "totalSpent" + $1,
+                     "budget" = "budget" - $1
                  WHERE "customerID" = $2
                  RETURNING *`,
                 [order.totalprice, order.customerID]
