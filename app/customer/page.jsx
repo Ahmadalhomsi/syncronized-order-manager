@@ -178,7 +178,7 @@ export default function CustomerPage() {
                 return;
             }
 
-            if (customer.budget < selectedProduct.price * item.quantity) {
+            if (customer && customer.budget < selectedProduct.price * item.quantity) {
                 toast({
                     title: "Error",
                     description: "Not enough budget",
@@ -187,14 +187,14 @@ export default function CustomerPage() {
 
                 const logData = {
                     message: "Not enough budget",
-                    userType: customer.customerType,
+                    userType: customer.customerType, // Use optional chaining and nullish coalescing
                     customerId: userId,
                     product: selectedProduct.productName,
                     quantity: item.quantity,
                     result: "Not enough budget"
-                }
+                };
 
-                await addLog(logData)
+                await addLog(logData);
                 return;
             }
 
@@ -279,8 +279,11 @@ export default function CustomerPage() {
         <div className="p-4 max-w-2xl mx-auto">
             <Toaster duration={3000} position="top-right" closeButton swipeDirection="right" swipeThreshold={50} />
             <h1 className="text-2xl font-bold mb-1">Product Order Request</h1>
-            <h2 className="text-xl font-bold mb-6 text-green-600">Customer money: {customer.budget}
-            </h2>
+            {customer && customer.budget !== undefined && ( // Check for both null/undefined and undefined budget
+                <h2 className="text-xl font-bold mb-6 text-green-600">
+                    Customer money: {customer.budget}
+                </h2>
+            )}
             <div className="space-y-4">
                 {orderItems.map((item, index) => (
                     <div key={index} className="p-4 border rounded">
