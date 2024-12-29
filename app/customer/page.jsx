@@ -178,6 +178,26 @@ export default function CustomerPage() {
                 return;
             }
 
+            if (customer.budget < selectedProduct.price * item.quantity) {
+                toast({
+                    title: "Error",
+                    description: "Not enough budget",
+                    variant: "destructive",
+                });
+
+                const logData = {
+                    message: "Not enough budget",
+                    userType: customer.customerType,
+                    customerId: userId,
+                    product: selectedProduct.productName,
+                    quantity: item.quantity,
+                    result: "Not enough budget"
+                }
+
+                await addLog(logData)
+                return;
+            }
+
             validatedOrders.push({
                 customerID: userId,
                 productID: selectedProduct.productID,
