@@ -21,3 +21,12 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json(result.rows[0]);
 }
+
+export async function DELETE(request, { params }) {
+    const result = await query(
+        'DELETE FROM "Products" WHERE "productID" = $1 RETURNING *',
+        [parseInt(params.id)]
+    );
+
+    return NextResponse.json({ message: 'Product deleted successfully', product: result.rows[0] });
+}
