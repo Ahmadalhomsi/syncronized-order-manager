@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from '@/components/ui/label';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Trash2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const ProductInventoryPanel = () => {
@@ -17,6 +17,8 @@ const ProductInventoryPanel = () => {
   const [error, setError] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
   const [loading, setLoading] = useState(false);
   const [editForm, setEditForm] = useState({
     productName: '',
@@ -82,6 +84,28 @@ const ProductInventoryPanel = () => {
       price: product.price
     });
     setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (product) => {
+    setProductToDelete(product);
+    setIsDeleteModalOpen(true);
+  };
+
+  const deleteProduct = async () => {
+    try {
+      if (!productToDelete) return;
+
+      const response = await fetch(`/api/products/${productToDelete.productID}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('Failed to delete product');
+      await fetchProducts();
+      setIsDeleteModalOpen(false);
+      setProductToDelete(null);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const saveProductChanges = async () => {
@@ -164,7 +188,14 @@ const ProductInventoryPanel = () => {
                     </TableCell>
                     <TableCell>{product.price} TL</TableCell>
                     <TableCell>
-                      <Button size="sm" variant="outline" onClick={() => handleEdit(product)}>Düzenle</Button>
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="outline" onClick={() => handleEdit(product)}>
+                          Düzenle
+                        </Button>
+                        <Button size="sm" variant="destructive" onClick={() => handleDelete(product)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -212,6 +243,25 @@ const ProductInventoryPanel = () => {
               </Button>
               <Button onClick={saveProductChanges}>
                 Kaydet
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Ürünü Sil</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <p>&quot;{productToDelete?.productName}&quot; ürününü silmek istediğinizden emin misiniz?</p>
+            </div>
+            <DialogFooter>
+              <Button variant="secondary" onClick={() => setIsDeleteModalOpen(false)}>
+                İptal
+              </Button>
+              <Button variant="destructive" onClick={deleteProduct}>
+                Sil
               </Button>
             </DialogFooter>
           </DialogContent>
