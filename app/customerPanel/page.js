@@ -50,7 +50,6 @@ const CustomerDashboard = () => {
         customerName: `Premium Customer ${i + 1}`,
         customerType: "Premium",
         budget: Math.floor(Math.random() * 2501) + 500,
-        status: "Pending",
         lastOrderDate: new Date().toISOString(),
         totalSpent: 0,
       })),
@@ -58,7 +57,6 @@ const CustomerDashboard = () => {
         customerName: `Regular Customer ${i + 1}`,
         customerType: "Regular",
         budget: Math.floor(Math.random() * 2501) + 500,
-        status: "Pending",
         lastOrderDate: new Date().toISOString(),
         totalSpent: 0,
       })),
@@ -89,12 +87,6 @@ const CustomerDashboard = () => {
       Completed: "bg-green-100 text-green-800",
     };
     return colors[status] || "bg-gray-100";
-  };
-
-  const calculatePriorityScore = (customer) => {
-    const waitingTime = Date.now() - new Date(customer.lastOrderDate).getTime();
-    const waitingHours = Math.floor(waitingTime / (1000 * 60 * 60));
-    return customer.customerType === "Premium" ? waitingHours * 1.5 : waitingHours;
   };
 
   if (loading) return <div>Loading...</div>;
@@ -144,9 +136,6 @@ const CustomerDashboard = () => {
                 <TableHead>Ad</TableHead>
                 <TableHead>Tür</TableHead>
                 <TableHead>Bütçe</TableHead>
-                <TableHead>Bekleme Süresi</TableHead>
-                <TableHead>Öncelik Skoru</TableHead>
-                <TableHead>Durum</TableHead>
                 <TableHead>İşlemler</TableHead>
               </TableRow>
             </TableHeader>
@@ -161,15 +150,6 @@ const CustomerDashboard = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>{customer.budget} TL</TableCell>
-                  <TableCell>
-                    {Math.floor((Date.now() - new Date(customer.lastOrderDate).getTime()) / (1000 * 60 * 60))} saat
-                  </TableCell>
-                  <TableCell>{calculatePriorityScore(customer).toFixed(1)}</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded-full ${getStatusColor(customer.status)}`}>
-                      {customer.status}
-                    </span>
-                  </TableCell>
                   <TableCell>
                     <Dialog open={openDialog && selectedCustomerId === customer.customerID} onOpenChange={(open) => {
                       setOpenDialog(open);

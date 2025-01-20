@@ -1,28 +1,34 @@
 // ws-server.js
 
-const { WebSocketServer } = require('ws');
+const { WebSocketServer } = require("ws");
 
 const PORT = 8080;
 const wss = new WebSocketServer({ port: PORT });
 
 let clients = [];
 
-wss.on('connection', (socket) => {
-  console.log('New client connected');
+wss.on("connection", (socket) => {
+  console.log("New client connected");
   clients.push(socket);
 
-  socket.on('message', (data) => {
-    console.log('Received:', data.toString());
-    // Broadcast the message to all connected clients
-    clients.forEach((client) => {
-      if (client.readyState === client.OPEN) {
-        client.send(data.toString());
-      }
-    });
+  socket.on("message", (data) => {
+    try {
+      const parsedData = JSON.parse(data.toString());
+      console.log("Received:", parsedData);
+
+      // Broadcast the message or response to all connected clients
+      clients.forEach((client) => {
+        if (client.readyState === client.OPEN) {
+          client.send(JSON.stringify(parsedData));
+        }
+      });
+    } catch (error) {
+      console.error("Error parsing message:", error);
+    }
   });
 
-  socket.on('close', () => {
-    console.log('Client disconnected');
+  socket.on("close", () => {
+    console.log("Client disconnected");
     clients = clients.filter((client) => client !== socket);
   });
 });

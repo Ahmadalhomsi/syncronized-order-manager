@@ -16,6 +16,7 @@ import {
     CalendarClock,
     SquareKanban,
 } from "lucide-react";
+import { ExitIcon } from "@radix-ui/react-icons";
 
 export default function SideNavbar() {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -50,6 +51,18 @@ export default function SideNavbar() {
         return null; // Hide sidebar on mobile
     }
 
+    const logout = async () => {
+        // delete user_session
+        const res = await fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (res.ok) {
+            window.location.href = '/login';
+        }
+    }
+
     return (
         <div className="relative min-w-[60px] pt-8 flex justify-center items-center">
             {/* Toggle button */}
@@ -76,6 +89,14 @@ export default function SideNavbar() {
                         </li>
                     ))}
                 </ul>
+                <Button
+                    variant="ghost"
+                    className="w-full justify-start flex items-center gap-4 text-red-800 "
+                    onClick={logout}
+                >
+                    <ExitIcon className="w-5 h-5" />
+                    {!isCollapsed && <span>Logout</span>}
+                </Button>
             </div>
         </div>
     );

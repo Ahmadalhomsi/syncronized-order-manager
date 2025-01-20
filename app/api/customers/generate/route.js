@@ -5,19 +5,21 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   try {
     const { customers } = await request.json();
-    
+    const staticPassword = '123456'; // Static password for all customers in this test project
+
     // Using a transaction to ensure all customers are created or none
     await query('BEGIN');
     
     const results = await Promise.all(
       customers.map(customer => 
         query(
-          'INSERT INTO "Customers" ("customerName", "customerType", budget, "totalSpent") VALUES ($1, $2, $3, $4) RETURNING *',
+          'INSERT INTO "Customers" ("customerName", "customerType", budget, "totalSpent", "password") VALUES ($1, $2, $3, $4, $5) RETURNING *',
           [
             customer.customerName,
             customer.customerType,
             customer.budget,
-            customer.totalSpent
+            customer.totalSpent,
+            staticPassword
           ]
         )
       )
