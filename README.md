@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Real-Time Order Management System
 
-## Getting Started
+A web application for managing customers, products, and orders with real-time updates using WebSockets and PostgreSQL.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- 🚀 Real-time order processing with WebSocket integration
+- 👨💻 Admin dashboard for order approval/rejection
+- 📦 Product inventory management with stock adjustments
+- 👥 Customer management with priority scoring
+- 📊 Order tracking and history
+- 🔐 JWT-based authentication
+- 📝 Activity logging system
+- 📱 Responsive UI with modern components
+- 🔄 PostgreSQL database integration
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- **Frontend**: Next.js, React, Tailwind CSS
+- **Backend**: Next.js API Routes
+- **Database**: PostgreSQL
+- **Real-Time**: WebSockets, PostgreSQL LISTEN/NOTIFY
+- **Authentication**: JWT, bcrypt
+- **UI Components**: Shadcn/ui
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Installation
 
-## Learn More
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ahmadalhomsi/your-repo.git
+   cd your-repo
 
-To learn more about Next.js, take a look at the following resources:
+2. Install dependencies:
+   ```bash
+   npm install
+3. Set up PostgreSQL database and create the following tables:
+    ```bash
+    CREATE TABLE Users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+    );
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    CREATE TABLE Customers (
+    customerID SERIAL PRIMARY KEY,
+    customerName VARCHAR(255) NOT NULL,
+    customerType VARCHAR(50) CHECK (customerType IN ('Premium', 'Regular')),
+    budget DECIMAL(10,2),
+    totalSpent DECIMAL(10,2) DEFAULT 0,
+    lastOrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    CREATE TABLE Products (
+    productID SERIAL PRIMARY KEY,
+    productName VARCHAR(255) NOT NULL,
+    stock INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL
+    );
 
-## Deploy on Vercel
+    CREATE TABLE Orders (
+    orderID SERIAL PRIMARY KEY,
+    customerID INT REFERENCES Customers(customerID),
+    productID INT REFERENCES Products(productID),
+    quantity INT NOT NULL,
+    totalprice DECIMAL(10,2) NOT NULL,
+    orderstatus VARCHAR(50) DEFAULT 'Pending',
+    orderdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Configuration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Create .env file:
+
+    ```
+    DATABASE_URL="postgresql://user:password@localhost:5432/dbname?schema=public"
+    JWT_SECRET="your-secret-key"
+
+2. Environment variables:
+
+* DATABASE_URL: PostgreSQL connection string
+* JWT_SECRET: Secret key for JWT tokens
+
+## Running the Application
+
+1. Start the Next.js development server:
+    ```
+    npm run dev
+2. Access the application at http://localhost:3000
+
+## Project Structure
+
+        ├── app/               # Next.js application routes
+    │   ├── admin/         # Admin dashboard
+    │   ├── api/           # API endpoints
+    │   ├── components/    # Reusable components
+    │   └── ...            # Other application pages
+    ├── lib/               # Database and utility functions
+    ├── hooks/             # Custom React hooks
+    ├── public/            # Static assets
+    └── components/        # UI components library
+
+Key API Endpoints  
+Endpoint	Method	Description  
+/api/auth/signin	POST	User authentication  
+/api/auth/signup	POST	User registration  
+/api/customers	GET	Get all customers  
+/api/orders	POST	Create new order  
+/api/orders/process	POST	Process order status  
+/api/products	GET	Get all products  
+
