@@ -5,9 +5,9 @@ import { toast } from "@/hooks/use-toast";
 import { useWebSocket } from "../../hooks/useWebSocket";
 
 // Worker for priority calculations
-const priorityWorker = new Worker(
-    new URL('./priorityWorker.js', import.meta.url)
-);
+// const priorityWorker = new Worker(
+//     new URL('./priorityWorker.js', import.meta.url)
+// );
 
 export default function AdminPage() {
     const { messages, sendResponse } = useWebSocket("ws://localhost:8080");
