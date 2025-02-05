@@ -108,3 +108,13 @@ Endpoint	Method	Description
 /api/orders/process	POST	Process order status  
 /api/products	GET	Get all products  
 
+## Screenshots
+
+![1](https://github.com/Ahmadalhomsi/syncronized-order-manager/blob/master/Pic/1.png)
+![2](https://github.com/Ahmadalhomsi/syncronized-order-manager/blob/master/Pic/2.png)
+![3](https://github.com/Ahmadalhomsi/syncronized-order-manager/blob/master/Pic/3.png)
+![4](https://github.com/Ahmadalhomsi/syncronized-order-manager/blob/master/Pic/4.png)
+![5](https://github.com/Ahmadalhomsi/syncronized-order-manager/blob/master/Pic/5.png)
+![6](https://github.com/Ahmadalhomsi/syncronized-order-manager/blob/master/Pic/6.png)
+
+
