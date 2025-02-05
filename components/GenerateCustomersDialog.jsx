@@ -7,11 +7,11 @@ const GenerateCustomersDialog = ({ onGenerate, isGenerating }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="default">Random Müşteri Oluştur</Button>
+                <Button variant="default">Generate Random Customer</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Rastgele Müşteri Oluştur</DialogTitle>
+                    <DialogTitle>Generate Random Customer</DialogTitle>
                     <DialogDescription>
                         This will generate:
                         • 5-10 random customers
@@ -21,7 +21,7 @@ const GenerateCustomersDialog = ({ onGenerate, isGenerating }) => {
                 </DialogHeader>
                 <div className="flex justify-end">
                     <Button onClick={onGenerate} disabled={isGenerating}>
-                        {isGenerating ? "Oluşturuluyor..." : "Oluştur"}
+                        {isGenerating ? "Generating..." : "Generate"}
                     </Button>
                 </div>
             </DialogContent>

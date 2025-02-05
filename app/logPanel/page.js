@@ -54,8 +54,8 @@ const LogPanel = () => {
   }
 
   const getLogType = (message) => {
-    if (message.includes('yetersiz')) return 'error'
-    if (message.includes('sipariş')) return 'success'
+    if (message.includes('insufficient')) return 'error'
+    if (message.includes('order')) return 'success'
     return 'info'
   }
 
@@ -69,23 +69,23 @@ const LogPanel = () => {
   }
 
   const formatTimestamp = (timestamp) => {
-    return new Date(timestamp).toLocaleString('tr-TR')
+    return new Date(timestamp).toLocaleString('en-US')
   }
 
   const renderLogDetails = (log) => {
     const details = []
 
     if (log.customerId) {
-      details.push(`Müşteri: ${log.customerId}`)
+      details.push(`Customer: ${log.customerId}`)
     }
     if (log.product) {
-      details.push(`Ürün: ${log.product}`)
+      details.push(`Product: ${log.product}`)
     }
     if (log.quantity) {
-      details.push(`Miktar: ${log.quantity}`)
+      details.push(`Quantity: ${log.quantity}`)
     }
     if (log.result) {
-      details.push(`Sonuç: ${log.result}`)
+      details.push(`Result: ${log.result}`)
     }
 
     return details.join(' | ')
@@ -94,7 +94,7 @@ const LogPanel = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>İşlem Logları</CardTitle>
+        <CardTitle>Transaction Logs</CardTitle>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[400px] w-full">

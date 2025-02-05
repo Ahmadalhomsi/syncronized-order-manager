@@ -144,20 +144,20 @@ const ProductInventoryPanel = () => {
         <div className="flex justify-end">
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button>Yeni Ürün Ekle</Button>
+              <Button>Add New Product</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Yeni Ürün Ekle</DialogTitle>
+                <DialogTitle>Add New Product</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
-                <Label>Ürün Adı</Label>
+                <Label>Product Name</Label>
                 <Input value={newProduct.productName} onChange={(e) => setNewProduct({ ...newProduct, productName: e.target.value })} />
-                <Label>Stok Miktarı</Label>
+                <Label>Stock Quantity</Label>
                 <Input type="number" value={newProduct.stock} onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })} />
-                <Label>Fiyat</Label>
+                <Label>Price</Label>
                 <Input type="number" value={newProduct.price} onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })} />
-                <Button onClick={addProduct} disabled={loading}>{loading ? 'Ekleniyor...' : 'Ekle'}</Button>
+                <Button onClick={addProduct} disabled={loading}>{loading ? 'Adding...' : 'Add'}</Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -165,16 +165,16 @@ const ProductInventoryPanel = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Ürün Stok Yönetimi</CardTitle>
+            <CardTitle>Product Stock Management</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Ürün Adı</TableHead>
-                  <TableHead>Stok Miktarı</TableHead>
-                  <TableHead>Fiyat</TableHead>
-                  <TableHead>İşlemler</TableHead>
+                  <TableHead>Product Name</TableHead>
+                  <TableHead>Stock Quantity</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -190,7 +190,7 @@ const ProductInventoryPanel = () => {
                     <TableCell>
                       <div className="flex space-x-2">
                         <Button size="sm" variant="outline" onClick={() => handleEdit(product)}>
-                          Düzenle
+                          Edit
                         </Button>
                         <Button size="sm" variant="destructive" onClick={() => handleDelete(product)}>
                           <Trash2 className="h-4 w-4" />
@@ -207,11 +207,11 @@ const ProductInventoryPanel = () => {
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Ürünü Düzenle</DialogTitle>
+              <DialogTitle>Edit Product</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="productName">Ürün Adı</Label>
+                <Label htmlFor="productName">Product Name</Label>
                 <Input
                   id="productName"
                   value={editForm.productName}
@@ -219,7 +219,7 @@ const ProductInventoryPanel = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="stock">Stok Miktarı</Label>
+                <Label htmlFor="stock">Stock Quantity</Label>
                 <Input
                   id="stock"
                   type="number"
@@ -228,7 +228,7 @@ const ProductInventoryPanel = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="price">Fiyat</Label>
+                <Label htmlFor="price">Price</Label>
                 <Input
                   id="price"
                   type="number"
@@ -239,10 +239,10 @@ const ProductInventoryPanel = () => {
             </div>
             <DialogFooter>
               <Button variant="secondary" onClick={() => setIsEditModalOpen(false)}>
-                İptal
+                Cancel
               </Button>
               <Button onClick={saveProductChanges}>
-                Kaydet
+                Save
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -251,17 +251,17 @@ const ProductInventoryPanel = () => {
         <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Ürünü Sil</DialogTitle>
+              <DialogTitle>Delete Product</DialogTitle>
             </DialogHeader>
             <div className="py-4">
-              <p>&quot;{productToDelete?.productName}&quot; ürününü silmek istediğinizden emin misiniz?</p>
+              <p>Are you sure you want to delete the product &quot;{productToDelete?.productName}&quot;?</p>
             </div>
             <DialogFooter>
               <Button variant="secondary" onClick={() => setIsDeleteModalOpen(false)}>
-                İptal
+                Cancel
               </Button>
               <Button variant="destructive" onClick={deleteProduct}>
-                Sil
+                Delete
               </Button>
             </DialogFooter>
           </DialogContent>

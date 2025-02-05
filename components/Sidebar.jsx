@@ -38,9 +38,9 @@ export default function SideNavbar() {
 
     const links = [
         { title: "Admin", icon: Home, href: "/admin" },
-        { title: "Müşteri Panel", icon: FileText, href: "/customerPanel" },
-        { title: "Ürün Stok Paneli", icon: LayoutDashboard, href: "/productStock" },
-        { title: "Log Paneli", icon: CalendarClock, href: "/logPanel" },
+        { title: "Customer Panel", icon: FileText, href: "/customerPanel" },
+        { title: "Product Stock Panel", icon: LayoutDashboard, href: "/productStock" },
+        { title: "Log Panel", icon: CalendarClock, href: "/logPanel" },
     ];
 
     function toggleSidebar() {

@@ -93,8 +93,6 @@ const CustomerDashboard = () => {
 
   const handleCreateOrder = async (orders) => {
     console.log(orders);
-    console.log("aaa");
-
 
     try {
       const orderPromises = orders.map(orderData =>
@@ -124,7 +122,7 @@ const CustomerDashboard = () => {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Müşteri Listesi</CardTitle>
+          <CardTitle>Customer List</CardTitle>
           <GenerateCustomersDialog onGenerate={generateRandomCustomers} isGenerating={generating} />
 
         </CardHeader>
@@ -132,11 +130,11 @@ const CustomerDashboard = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Müşteri ID</TableHead>
-                <TableHead>Ad</TableHead>
-                <TableHead>Tür</TableHead>
-                <TableHead>Bütçe</TableHead>
-                <TableHead>İşlemler</TableHead>
+                <TableHead>Customer ID</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Budget</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -161,12 +159,12 @@ const CustomerDashboard = () => {
                           size="sm"
                           onClick={() => setSelectedCustomerId(customer.customerID)}
                         >
-                          Sipariş Oluştur
+                          Create Order
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="max-w-2xl">
                         <DialogHeader>
-                          <DialogTitle>Yeni Sipariş - {customer.customerName}</DialogTitle>
+                          <DialogTitle>New Order - {customer.customerName}</DialogTitle>
                         </DialogHeader>
                         <OrderForm
                           customerID={customer.customerID}
